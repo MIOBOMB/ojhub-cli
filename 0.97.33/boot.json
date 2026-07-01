@@ -1,0 +1,15 @@
+{
+	"ver":"0.97.33",
+	"path":"/cli/0.97.33/",
+	"files":{
+		"js":[
+			"newHelper",
+			"!nhConfig",
+			"!ojhub"
+		],
+		"css":[
+			"main",
+			"window"
+		]
+	}
+}

@@ -1,0 +1,105 @@
+.upperWindow {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	border-radius: var(--def-border-small);
+	border: solid var(--color-window) 1px;
+	z-index: 5;
+	max-width: 100vw;
+	max-height: 100vh;
+}
+
+.underWindow {
+	cursor: move;
+	position: absolute;
+	top: -2px;
+	left: -2px;
+	width: 100%;
+	height: 20px;
+	border: solid var(--color-window) 2px;
+	border-top-left-radius: var(--def-border-small);
+	border-top-right-radius: var(--def-border-small);
+}
+
+.hider {
+	z-index: 6;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+}
+
+.ANIM-create2 {
+	animation: aniCreate2 .3s forwards;
+}
+@keyframes aniCreate2 {
+	0% {opacity: 0;transform: scale(.8)}
+	100% {opacity: 1;transform: scale(1)}
+}
+
+.ANIM-stop2 {
+	animation: aniStop2 .3s forwards;
+}
+@keyframes aniStop2 {
+	0% {opacity: 1;transform: scale(1)}
+	100% {opacity: 0;transform: scale(.8)}
+}
+
+.ANIM-hide2 {
+	animation: aniHide2 .3s forwards;
+}
+@keyframes aniHide2 {
+	0% {opacity: 1;transform: scale(1)}
+	100% {opacity: 0;transform: scale(.5) translate(-100%,-100%);top:calc(100% - 50px);left:100px;}
+}
+
+.ANIM-recreate2 {
+	animation: aniRecreate2 .3s forwards;
+}
+@keyframes aniRecreate2 {
+	0% {opacity: 0;transform: scale(.5) translate(-100%,-100%);top:calc(100% - 50px);left:100px;}
+	100% {opacity: 1;transform: scale(1)}
+}
+
+.ANIM-full2 {
+	animation: aniFull2 .3s forwards;
+}
+@keyframes aniFull2 {
+	0% {}
+	100% {top:0;left:0;width:calc(100% - 50px);height:calc(100% - 50px);}
+}
+
+.ANIM-unfull2 {
+	animation: aniUnfull2 .3s forwards;
+}
+@keyframes aniUnfull2 {
+	0% {top:0;left:0;width:calc(100% - 50px);height:calc(100% - 50px);}
+	100% {}
+}
+
+.ANIM-unfullstop2 {
+	animation: aniUnfullstop2 .3s forwards;
+}
+@keyframes aniUnfullstop2 {
+	0% {opacity: 1;transform: scale(1);top:0;left:0;width:calc(100% - 50px);height:calc(100% - 50px);}
+	100% {opacity: 0;transform: scale(.8);top:0;left:0;width:calc(100% - 50px);height:calc(100% - 50px);}
+}
+
+.ANIM-unfullhide2 {
+	animation: aniUnfullhide2 .3s forwards;
+}
+@keyframes aniUnfullhide2 {
+	0% {opacity: 1;transform: scale(1);top:0;left:0;width:calc(100% - 50px);height:calc(100% - 50px);}
+	100% {opacity: 0;transform: scale(.5) translate(-100%,-100%);top:calc(100% - 50px);left:100px;width:calc(100% - 50px);height:calc(100% - 50px);}
+}
+
+.ANIM-fullhide2 {
+	animation: aniFullhide2 .3s forwards;
+}
+@keyframes aniFullhide2 {
+	0% {opacity: 0;transform: scale(.5) translate(-100%,-100%);top:calc(100% - 50px);left:100px;width:calc(100% - 50px);height:calc(100% - 50px);}
+	100% {opacity: 1;transform: scale(1);top:0;left:0;width:calc(100% - 50px);height:calc(100% - 50px);}
+}
+
+.profileSwticher {
+	margin-left: var(--def-font);
+}
