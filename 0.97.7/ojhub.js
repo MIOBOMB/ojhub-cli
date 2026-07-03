@@ -35,6 +35,7 @@ captchaLoad = false,
 //Slocal = new helperStorage('oschub'),
 Slocal = new _.storage(localStorage, 'oschub'),
 
+helperVapidPublic = 'BEcP_7U_yMSR7K0oqBHQAHDK5jl9d7zKsxtXn_n7gIUr547kWWtUg_wfBDBtUpGiOs2Lg5iq0Y-G7JUBprJzyYU',
 helperCaptchaSiteKey = '6Ldrt0grAAAAAMdteG7pq6LZ1UYeMvkElvUV7Qhx',
 globalWiki = 0,
 wikiTemplates = {},
@@ -93,7 +94,6 @@ if (token)
 	_.http.defaultHeaders['user-token'] = token;
 
 let reStart = (drop = 0, errId = 0)=>{
-
 	let errElem = _.$.id('debug'+errId);
 	if (errElem) {
 		delete _.err.errors[errId];
@@ -301,21 +301,19 @@ let
 // #endregion
 // #region компоненты
 // #region микрокомпоненты
-
-emptyButton = (text = '', func = '', style = '', id = '', Class = '')=>{
-	return `<button ${id ? 'id="'+id+'"' : ''}class="emptybtn ${Class}" style="${style}" onclick="${func}"${text}/button>`;
-},
-imageButton = (img = '', func = '', style = '', id = '', Class = '')=>{
-	return `<button ${id ? 'id="'+id+'"' : ''}class="loginbtnMini ${Class}" style="${style}" onclick="${func}"><img style=margin:0 width="24px" src="${img}"></button>`;
-},
-basicInput = (text = '', idAndName = '', style = '', Class = '', value = '')=>{
-	let fullText = text == '' ? '>' : getTrans(text, 'input');
-	return `<input ${idAndName ? `id="${idAndName}" name="${idAndName}"` : ''}class="framelabel ${Class}" ${value ? 'value="'+value+'"' : ''}style="${style}"${fullText}`;
-},
-radioInput = (id = '', name = '', isChecked = 0, otnerArgs)=>{
-	return `<input id="${id}" name="${name}" type=radio ${otnerArgs} ${isChecked ? 'checked' : ''}>`;
-},
-
+	emptyButton = (text = '', func = '', style = '', id = '', Class = '')=>{
+		return `<button ${id ? 'id="'+id+'"' : ''}class="emptybtn ${Class}" style="${style}" onclick="${func}"${text}/button>`;
+	},
+	imageButton = (img = '', func = '', style = '', id = '', Class = '')=>{
+		return `<button ${id ? 'id="'+id+'"' : ''}class="loginbtnMini ${Class}" style="${style}" onclick="${func}"><img style=margin:0 width="24px" src="${img}"></button>`;
+	},
+	basicInput = (text = '', idAndName = '', style = '', Class = '', value = '')=>{
+		let fullText = text == '' ? '>' : getTrans(text, 'input');
+		return `<input ${idAndName ? `id="${idAndName}" name="${idAndName}"` : ''}class="framelabel ${Class}" ${value ? 'value="'+value+'"' : ''}style="${style}"${fullText}`;
+	},
+	radioInput = (id = '', name = '', isChecked = 0, otnerArgs)=>{
+		return `<input id="${id}" name="${name}" type=radio ${otnerArgs} ${isChecked ? 'checked' : ''}>`;
+	},
 // #endregion
 
 headerButton = (text, Class, oncl)=>{
@@ -2538,6 +2536,55 @@ repaintLikeButton = (id, isComm, liketype = 0)=>{
 	if (dislElem.style.filter != '') {
 		dislElem.setAttribute('style', '');
 	}
+},
+// #endregion
+// #region уведомления!
+
+pushSubscribe = async ()=>{
+	if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+		console.warn('push не поддерживается этим браузером');
+		return false;
+	}
+
+	const reg = await navigator.serviceWorker.register('/sw.js');
+	await navigator.serviceWorker.ready;
+
+	let sub = await reg.pushManager.getSubscription();
+
+	if (!sub) {
+		const permission = await Notification.requestPermission();
+		if (permission !== 'granted') {
+			Slocal.set('Push', '-1');
+			return false;
+		}
+
+		sub = await reg.pushManager.subscribe({
+			userVisibleOnly: true,
+			applicationServerKey: pushUrlBase64ToUint8Array(helperVapidPublic)
+		});
+	}
+
+	return pushSendToServer(sub);
+},
+pushSendToServer = async (sub)=>{
+	let j = sub.toJSON(),
+		data = `endpoint=${encodeURIComponent(j.endpoint)}&`+
+				`p256dh=${encodeURIComponent(j.keys.p256dh)}&`+
+				`auth=${encodeURIComponent(j.keys.auth)}`,
+		res = await _.http.req('POST', '/v1/sub.php', data);
+
+	if (res !== '1') {
+		console.error('push: не удалось сохранить подписку', res);
+		return false;
+	}
+
+	return true;
+},
+pushUrlBase64ToUint8Array = (base64String)=>{
+	const padding = '='.repeat((4 - base64String.length % 4) % 4);
+	const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+	const rawData = atob(base64);
+	return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
 },
 // #endregion
 // #region рендер контента (шоу, кемпы)
