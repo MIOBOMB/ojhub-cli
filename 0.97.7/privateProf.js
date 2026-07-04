@@ -1543,6 +1543,7 @@ alarmsWindow = ()=>{
 	`<div id=helperContentProfile>`+
 		`<div align=center>`+
 			`<h1${getTrans('alarms01')}/h1>`+
+			basicButton('>Sub to alerts<', 'pushSubscribe()')+
 			`<div style="display:flex">`+
 				`<div style="width:30%;height:400px">`+
 					`<h2${getTrans('msgs')}/h2>`+
