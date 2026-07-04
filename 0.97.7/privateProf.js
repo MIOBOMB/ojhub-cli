@@ -865,9 +865,6 @@ switchProfileSettings = (isPhone = 0)=>{ // makeSwticher(0,'userSettings2', swit
 	if (isPhone == 0) 
 		html = 
 			`<div class=ANIM-swticherUp id=userSettings2>`+
-				`<button class=loginbtn onclick="alarmsWindow();GetAlarms()" style=position:relative${getTrans('Alarms', 'textBtn')}`+
-				(thisUser.hasAlarms == 1 ? '<span style="position:absolute;top:-4px;right:-4px;border:solid red 5px;border-radius:var(--def-border-small)"></span>' : '')+
-				`</button><br><br>`+
 				`<button class=loginbtn onclick="profileDevices()"${getTrans('settings010')}/button><br><br>`+
 				`<button class=loginbtn onclick="innerProfile();clrEditPage()"${getTrans('settings009')}/button><br><br>`+
 				`<button class=loginbtn onclick="innerProfile();keyBindsCfg2()"${getTrans('settings013')}/button><br><br>`+
@@ -875,9 +872,6 @@ switchProfileSettings = (isPhone = 0)=>{ // makeSwticher(0,'userSettings2', swit
 	else 
 		html = 
 			`<div class=ANIM-swticherUp id=userSettings2 style="display:grid;margin:0 8px 0 8px">`+
-				`<button class=loginbtn onclick="alarmsWindow();profileSwitcherPhone();GetAlarms()" style=position:relative${getTrans('Alarms', 'textBtn')}`+
-				(thisUser.hasAlarms == 1 ? '<span style="position:absolute;top:-4px;right:-4px;border:solid red 5px;border-radius:var(--def-border-small)"></span>' : '')+
-				`</button>`+
 				`<button class=loginbtn onclick="profileDevices();profileSwitcherPhone()"${getTrans('settings010')}/button>`+
 				`<button class=loginbtn onclick="innerProfile();clrEditPage();profileSwitcherPhone()"${getTrans('settings009')}/button>`+
 				`<button class=loginbtn onclick="innerProfile();keyBindsCfg2();profileSwitcherPhone()"${getTrans('settings013')}/button>`+
@@ -1529,7 +1523,7 @@ createWiki = (backpage = 0)=>{
 	`<div id=helperContentProfile>`+
 		`<h1${getTrans('guides01')}/h1>`+
 		`<button type=button class=loginbtn onclick="${backpage === 1 ? `profilePage();wikisWindow()` : `pageWikiList()`}"${getTrans('otmena')}/button><br>`+
-		`<form id=GDPSesPlace style=padding:8px method=post onsubmit="return enterFormData(this,'newWiki${php}')">`+
+		`<form id=GDPSesPlace style=padding:8px method=post onsubmit="return enterFormData(this,'${sData[1]}newWiki${php}')">`+
 			`<input name=title class=framelabel id=title style="width:calc(100% - 4px);font-size:calc(var(--def-font)*2)"${getTrans('guides02', 'input')}<br>`+
 			`<label${getTrans('gdpsLang00')}/label> `+
 			`<select id="langs" class="framelabel" name="language" required>`+
@@ -1552,7 +1546,7 @@ alarmsWindow = ()=>{
 			`<div style="display:flex">`+
 				`<div style="width:30%;height:400px">`+
 					`<h2${getTrans('msgs')}/h2>`+
-					`<div id=alarms_small>`+
+					`<div id=alarms_small style=display:grid>`+
 					`</div>`+
 				`</div>`+
 				`<div style="width:70%;height:400px">`+
@@ -1644,6 +1638,9 @@ profilePage = (innerHtnl = gProfileMini())=>{
 			`</button>`+
 			`<div id="phoneSelector" class=contentAdaptiveBig style="position:absolute;top:15px;width:235px" align="left">`+
 				`<button class=loginbtn onclick="innerProfile(gProfileMini())"${getTrans('profile')}/button><br><br>`+
+				`<button class=loginbtn onclick="alarmsWindow();GetAlarms()" style=position:relative${getTrans('Alarms', 'textBtn')}`+
+				(thisUser.hasAlarms == 1 ? '<span style="position:absolute;top:-4px;right:-4px;border:solid red 5px;border-radius:var(--def-border-small)"></span>' : '')+
+				`</button><br><br>`+
 				basicButton(getTrans('projects'), `makeSwticher(0,'userProjects2', switchProfileProjects(0), 'userProjects', 'switchProfileProjects')`)+'<br><br>'+
 				`<div class=profileSwticher id=userProjects></div>`+
 				`<button class=loginbtn onclick="makeSwticher(0,'userSettings2', switchProfileSettings(0), 'userSettings', 'switchProfileSettings')"${getTrans('settings000')}/button><br><br>`+
@@ -1651,6 +1648,9 @@ profilePage = (innerHtnl = gProfileMini())=>{
 			`</div>`+
 			`<div id="phoneSelectorSmall" class=contentAdaptiveSmall style=display:none>`+
 				`<button class=loginbtn onclick="innerProfile(gProfileMini());profileSwitcherPhone()"${getTrans('profile')}/button>`+
+				`<button class=loginbtn onclick="alarmsWindow();profileSwitcherPhone();GetAlarms()" style=position:relative${getTrans('Alarms', 'textBtn')}`+
+				(thisUser.hasAlarms == 1 ? '<span style="position:absolute;top:-4px;right:-4px;border:solid red 5px;border-radius:var(--def-border-small)"></span>' : '')+
+				`</button>`+
 				basicButton(getTrans('projects'), `makeSwticher(0,'userProjects2', switchProfileProjects(1), 'userProjectsPhone', 'switchProfileProjects')`)+
 				`<div id=userProjectsPhone></div>`+
 				`<button class=loginbtn onclick="makeSwticher(0,'userSettings2', switchProfileSettings(1), 'userSettingsPhone', 'switchProfileSettings')"${getTrans('settings000')}/button>`+

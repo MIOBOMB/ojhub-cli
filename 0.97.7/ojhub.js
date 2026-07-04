@@ -2053,7 +2053,7 @@ ADwrite = (userId = '')=>{
 	let anonymusSend = `<p><input type=checkbox name=anonymus> Send as Object hub</p>`;
 	_.win.open('writeAlarm', 
 		`<h1>Write to support</h1>`+
-		`<form onsubmit="return enterFormData(this,'writeAlarm${php}')">`+
+		`<form onsubmit="return enterFormData(this,'${nData[5]}writeAlarm')">`+
 			`<input name=windowId value={winId} type=hidden>`+
 			`<input placeholder="userId (not username)" class=framelabel ${thisUser.role === 0 ? 'type=hidden value=0':'type=text value="'+userId+'"'} name=user><br>`+
 			`<input placeholder=title class=framelabel name=title><br>`+
@@ -3208,12 +3208,11 @@ enterFormData = (form, sendPlace)=>{
 		Loading(1);
 		switch (sendPlace) {
 
-			case 'forumPost'+php:
+			case sData[1]+'forumPost'+php:
 				parsedData = JSON.parse(data);
 				getForumPost(parsedData[0],parsedData[1]);
-				_.win[_.$.q('[forumpost]').id].close();
+				_.wins[_.$.q('[forumpost]').id].close();
 				break;
-
 			case `${nData[11]}add`:
 				const funcs = {
 					'p': getPere,
@@ -3224,40 +3223,32 @@ enterFormData = (form, sendPlace)=>{
 				gId = FORMDATA.get('gdps');
 				funcs[gId[0]](gId.slice(1));
 				break;
-
-			case 'writeAlarm'+php:
-				_.win[FORMDATA.get('windowId')].close();
+			case `${nData[5]}writeAlarm`:
+				_.wins[FORMDATA.get('windowId')].close();
 				break;
-
 			case `${nData[2]}reportGdps`:
 				megaAlert('reported', 1000);
 				_.wins[FORMDATA.get('windowId')].close();
 				break;
-
-			case 'newGuide'+php:
+			case sData[1]+'newGuide'+php:
 				getGuide(data, FORMDATA.get('wikiId'));
 				break;
-
 			case `${nData[7]}editGuide`:
 				getGuide(data, FORMDATA.get('wikiId'));
 				break;
-
-			case 'newWiki'+php:
+			case sData[1]+'newWiki'+php:
 				parsedData = JSON.parse(data);
 				yourWikies['w'+parsedData.ID] = parsedData;
 				profilePage('');wikiControl(parsedData.ID);
 				break;
-
-			case 'editWiki'+php:
+			case sData[1]+'editWiki'+php:
 				parsedData = JSON.parse(data);
 				yourWikies['w'+parsedData.ID] = parsedData;
 				profilePage('');wikiControl(parsedData.ID);
 				break;
-
 			case `${nData[8]}add`:
 				getVacancies(FORMDATA.get('channel'),FORMDATA.get('id'));
 				break;
-
 			case `${nData[8]}edit`:
 				if (_.$.id('profileWindow')) 
 					getVacancies(FORMDATA.get('channel'),FORMDATA.get('gdpsId'));
@@ -3266,7 +3257,6 @@ enterFormData = (form, sendPlace)=>{
 					globalVacs();
 				}
 				break;
-
 			default:
 				console.log(sendPlace);
 				if (data == '-1')

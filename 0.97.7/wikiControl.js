@@ -190,7 +190,7 @@ createGuide = (wikiId, backpage = 0)=>{
 			html = 
 	`<h1${getTrans('guides01')}/h1>`+
 	// (guidWin == 0 ? `<button type=button class=loginbtn onclick="${backpage === 1 ? `profilePage('');getGuidesAdminControl(${wikiId})` : `pageGuides(${wikiId})`}"${getTrans('otmena')}/button><br>` : '')+
-	`<form id=GDPSesPlace{winId} style=padding:8px method=post onsubmit="return enterFormData(this,'newGuide${php}')">`+
+	`<form id=GDPSesPlace{winId} style=padding:8px method=post onsubmit="return enterFormData(this,'${sData[1]}newGuide${php}')">`+
 		`<input name=title class=guidInp id=title{winId} style="width:calc(100% - 4px);font-size:calc(var(--def-font)*2)"${getTrans('guides02', 'input')}<br>`+
 		`<label${getTrans('gdpsLang00')}/label> `+
 		`<select id="langs{winId}" class="framelabel" name="language" required>`+

@@ -336,7 +336,7 @@ uploadPost = (forumId)=>{
 	let html = 
 	`<div id=helperContentProfile>
 		<h1 id=blacktext${getTrans('newPost')}/h1>
-		<form method=post onsubmit="return enterFormData(this,'forumPost${php}')">
+		<form method=post onsubmit="return enterFormData(this,'${sData[1]}forumPost${php}')">
 			<input style=width:90% class=framelabel type=title name=title${getTrans('addCamp01', 'input')}<br>
 			<textarea style=width:90%;height:64px class=framelabel name=text ${getTrans('newsText', 'textarea')}/textarea><br>
 			<input type=hidden name=forumId value=${forumId}>
