@@ -2096,7 +2096,7 @@ loginPage = ()=>{
 		`<br><button style=width:100% class="loginbtn" onclick="subWindows.close('${subWindows.count}logonWindow')"${getTrans('back')}/button>`+
 		`<p align=right${getTrans('helperVer')}/p>`
 	, 'isloginwindow');
-	if (!ignoreCap && !$.lazy.loaded['https://www.google.com/recaptcha/api.js']) {
+	if (!ignoreCap) {
 		loadScript('https://www.google.com/recaptcha/api.js')
 			.then(()=>{
 				let elemId = id+'cap';
@@ -2120,7 +2120,7 @@ registerPage = ()=>{
 		`<br><button style=width:100% class="loginbtn" onclick="subWindows.close('${subWindows.count}logon2Window')"${getTrans('back')}/button>`+
 		`<p align=right${getTrans('helperVer')}/p>`
 	, 'isloginwindow');
-	if (!ignoreCap && !$.lazy.loaded['https://www.google.com/recaptcha/api.js']) {
+	if (!ignoreCap) {
 		loadScript('https://www.google.com/recaptcha/api.js')
 			.then(()=>{
 				let elemId = id+'cap';

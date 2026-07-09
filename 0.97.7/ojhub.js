@@ -2078,10 +2078,11 @@ loginPage = ()=>{
 		<br><button style="width:calc(100% - 16px)" class="loginbtn" onclick="_.wins['{winId}'].close()"${getTrans('back')}/button>
 		<p align=right${getTrans('helperVer')}/p>`
 	, 'isloginwindow');
-	if (!ignoreCap && !_.lazy.loaded['https://www.google.com/recaptcha/api.js']) {
+	if (!ignoreCap) {
 		_.lazy.load('https://www.google.com/recaptcha/api.js')
 			.then(()=>{
-				let elemId = id+'cap';
+				let elemId = id.id+'cap';
+				console.log(elemId);
 				captchaLoad ? grecaptcha.render(elemId) : captchaLoad = true;
 			})
 			.catch(e=>{console.error(e);_.err.handleRejection(e)});;
@@ -2101,10 +2102,10 @@ registerPage = ()=>{
 		<br><button style="width:calc(100% - 16px)" class="loginbtn" onclick="_.wins['{winId}'].close()"${getTrans('back')}/button>
 		<p align=right${getTrans('helperVer')}/p>`
 	, 'isloginwindow');
-	if (!ignoreCap && !_.lazy.loaded['https://www.google.com/recaptcha/api.js']) {
+	if (!ignoreCap) {
 		_.lazy.load('https://www.google.com/recaptcha/api.js')
 			.then(()=>{
-				let elemId = id+'cap';
+				let elemId = id.id+'cap';
 				captchaLoad ? grecaptcha.render(elemId) : captchaLoad = true;
 			})
 			.catch(e=>{console.error(e);_.err.handleRejection(e)});;
