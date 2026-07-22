@@ -144,7 +144,7 @@ getGuides = (wikiId, page)=>{
 		_.$.id('nextGdps').remove();
 
 	Loading();
-	_.http.req('GET',`${nData[7]}guides?wiki=${wikiId}&page=${page}`)
+	_.http.req('GET',`${sData[7]}getGuides${php}?wiki=${wikiId}&page=${page}`)
 		.then(data=>{
 			let parsedData = JSON.parse(data),
 				page2 = page++,
@@ -368,7 +368,7 @@ pageGuides = (wiki, backButton = '')=>{
 	`</div>`;
 	innerMain(html);
 	Loading();
-	_.http.req('GET',`${nData[7]}guides?wiki=${wiki}`)
+	_.http.req('GET',`${sData[7]}getWiki${php}?wiki=${wiki}`)
 		.then(data=>{
 			let parsedData = JSON.parse(data);
 			_.link.set('wiki='+wiki, parsedData[0].title);
@@ -395,7 +395,7 @@ getGuide = (id, wikiId = 0)=>{
 		`</div>`;
 	innerMain(html);
 	Loading();
-	_.http.req('GET',`${nData[7]}guide?id=${id}&wiki=${wikiId}`)
+	_.http.req('GET',`${sData[7]}getGuide${php}?id=${id}&wiki=${wikiId}`)
 		.then(data=>{
 			if (data == '["NONE"]') {
 				megaAlert('CONTENTISNULL');

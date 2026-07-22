@@ -28,6 +28,16 @@
  * Ваш контент                | 13++  | 6++         | -      | 2++
 */
 
+/*
+ * КАК МНЕ СДЕЛАТЬ ПОДПИСКИ
+ *
+ * Надо сделать механизм подписки и отписки
+ * Вероятно я задействую систему кеша лайков для проверки подписок
+ * потому что это удобно и городить новую систему так не надо
+ * Чтобы не мешаться каналам лайков, подписки я назову многобуквенно - "Subs"
+ *
+ * Можно спиздить код у вакансий - он возможно подойдёт
+ */
 
 // #region базовые компоненты ошхаба, связанные с невхелпером
 let 
@@ -106,7 +116,7 @@ let reStart = (drop = 0, errId = 0)=>{
 		Fingerprint.generate(token) // если токен есть значит есть и юзер => генерируем девайс токен
 			.then(fpData=>{
 				LIKES.init();
-				_.http.req('GET', `${nData[2]}loginT`)
+				_.http.req('GET', `${sData[2]}loginT`)
 					.then(data=>{
 						//Loading(1);
 						let serverResp = JSON.parse(data);
@@ -123,10 +133,8 @@ let reStart = (drop = 0, errId = 0)=>{
 								wikiesMini.push(yourWikies[el].ID.toString());
 							});
 						}
-						if (serverResp[0].token == 'false') {
-							delete _.http.defaultHeaders['user-token'];
+						if (serverResp[0].token == 'false')
 							return innerMain(deviceAddForm());
-						}
 						thisUser = serverResp[0];
 						Slocal.set('StaticUserData', JSON.stringify(thisUser));
 						helperIcon.href = 'https://objecthub.xyz/favicon.ico';
@@ -230,7 +238,7 @@ rebootPageContent = ()=>{
 reportError = (errorId)=>{
 	let text = encodeURIComponent(_.$.id('debugMega'+errorId).innerHTML);
 	Loading();
-	_.http.req('POST', `${nData[2]}reportGdps`, 'error='+text+'\\n\\n'+navigator.userAgent)
+	_.http.req('POST', `${sData[2]}reportGdps`, 'error='+text+'\\n\\n'+navigator.userAgent)
 		.then(data=>{
 			Loading(1);
 		})
@@ -404,6 +412,9 @@ contentRender = function(
 		(preHtml.img || tags ?
 		gdpsAvatar(preHtml.img) : '')+
 		`<h2 id=${preHtml.cType}title${preHtml.ID}>${preHtml.title}</h2>`+
+		(likeType === 0 ?
+		basicButton('>ПОДПИСАТЬСЯ<', `subRespond(${preHtml.ID})`)
+		: '')+																			///////////////////////////////////////////////////////////////////////////////////// КНОПКА ПОДПИСКИ
 		`<p style="margin:0">`+
 		(authorBtn ?
 			basicButton(`>${preHtml.gdpsTitle}<`, `${joinData}(${preHtml.gdpsId})`)+
@@ -792,7 +803,7 @@ sendFinder = (page = 0, query = '')=>{
 	lastChannel = helperFindData[3];
 
 	Loading();
-	_.http.req('GET', `${nData[3]}global?${query}&page=${page}&channel=${helperFindData[3]}`)
+	_.http.req('GET', `${sData[3]}new?${query}&page=${page}&channel=${helperFindData[3]}`)
 		.then(data=>{
 			let GDPSES = JSON.parse(data),
 				renderedData,
@@ -861,7 +872,7 @@ helperComments = (postId, contentType, commPage = 0)=>{
 		_.$.id('CnextGdps').remove();
 	let dataForNextButton = `${postId},'${contentType}',${parseInt(commPage + 1)}`;
 	Loading();
-	_.http.req('GET', `${nData[9]}list?id=${postId}&type=${contentType}&page=${commPage}`)
+	_.http.req('GET', `${sData[0]}fetchComms?id=${postId}&type=${contentType}&page=${commPage}`)
 		.then(data=>{
 			let serverResp = JSON.parse(data);
 			innerComments(renderComms(serverResp, contentType, dataForNextButton), 1);
@@ -900,7 +911,7 @@ getFind = (channel, id, joinData = 0)=>{
 	contentPreload(`${id},1,3`, 'pageFind('+channel+')');
 
 	Loading();
-	_.http.req('GET', `${nData[2]}gdps?id=${id}`)
+	_.http.req('GET', `${sData[0]}camp?id=${id}`)
 		.then(data=>{
 			if (data == '["NONE"]') {
 				pageFind(channel);
@@ -951,7 +962,7 @@ loadMoreNews = (gdpsId, backFunc, page, renderType = 0)=>{
 	if (_.$.id('nextGdps'))
 		_.$.id('nextGdps').remove();
 	Loading();
-	_.http.req('GET', `${nData[10]}news?id=${gdpsId}&page=${page}`)
+	_.http.req('GET', `${sData[0]}news?id=${gdpsId}&page=${page}`)
 		.then(data=>{
 			Loading(1);
 			if (data !== '{}') {
@@ -972,7 +983,7 @@ loadGlobalNews = (page)=>{
 	if (_.$.id('nextGdps'))
 		_.$.id('nextGdps').remove();
 	Loading();
-	_.http.req('GET', `${nData[2]}news?page=${page}`)
+	_.http.req('GET', `${sData[0]}newsAll?page=${page}`)
 		.then(data=>{
 			Loading(1);
 			if (data !== '{}') {
@@ -1042,7 +1053,7 @@ getNewsWithComments = (newsId, contentId = 0, backFuncPre = '', commBackFunc = '
 	contentPreload(`${newsId},3,5`, `${commBackFunc}(${contentId})`, 0, 0);
 
 	Loading();
-	_.http.req('GET', `${nData[11]}get?id=${newsId}`)
+	_.http.req('GET', `${sData[0]}newsC?id=${newsId}`)
 		.then(data=>{
 			if (data == '["NONE"]') {
 				pageFind(0);
@@ -1069,7 +1080,7 @@ getVacsWithComments = (vacId)=>{
 	contentPreload(`${vacId},5,12`, `${commBackFunc}(${vacId})`, 0, 0);
 
 	Loading();
-	_.http.req('GET', `${nData[8]}get?id=${vacId}`)
+	_.http.req('GET', `${sData[0]}vacsC?id=${vacId}`)
 		.then(data=>{
 			if (data == '["NONE"]') {
 				globalVacs();
@@ -1095,7 +1106,7 @@ getWikis = (page)=>{
 		_.$.id('nextGdps').remove();
 
 	Loading();
-	_.http.req('GET', `${nData[2]}wiki?page=${page}`)
+	_.http.req('GET', `${sData[7]}getWikis?page=${page}`)
 		.then(data=>{
 			let parsedData = JSON.parse(data),
 				page2 = page++,
@@ -1185,7 +1196,7 @@ sendRegisterForm = async (wId)=>{
 		return;
 	};
 		Loading();
-		_.http.req('POST', `${nData[5]}register`,
+		_.http.req('POST', `${sData[5]}register`,
 			`username=${username}&password=${password}&email=${email}&g-recaptcha-response=${reCAP}`+fp.urlDone, urlEncoded)
 			.then(data=>{
 				switch (data) {
@@ -1248,7 +1259,7 @@ sendLoginForm = async (wId)=>{
 		return;
 	};
 		Loading();
-		_.http.req('POST', `${nData[5]}login`,
+		_.http.req('POST', `${sData[5]}login`,
 			`username=${username}&password=${password}&g-recaptcha-response=${reCAP}`+fp.urlDone, urlEncoded)
 			.then(data=>{
 				Loading(1);
@@ -1367,7 +1378,7 @@ sendComm = (id, channel, likeChannel)=>{
 		'ide='	 + encodeURIComponent(id)
 	+ '&type=' + encodeURIComponent(channel)
 	+ '&text=' + encodeURIComponent(commText);
-	_.http.req('POST', `${nData[9]}send`, data, urlEncoded)
+	_.http.req('POST', `${sData[1]}comment`, data, urlEncoded)
 		.then(data=>{
 			Loading(1);
 			if (data == '-4') {
@@ -1392,7 +1403,7 @@ modifyComm = (id, channel)=>{
 	let text = _.$.id('editText-C'+id).value,
 			data = `id=${id}&type=${channel}&text=${text}`;
 	Loading();
-	_.http.req('POST', `${nData[9]}modify`, data, urlEncoded)
+	_.http.req('POST', `${sData[1]}commentModify`, data, urlEncoded)
 		.then(data=>{
 			Loading(1);
 			_.wins[_.$.q(`[commEdit${id}]`).id].close();
@@ -1412,7 +1423,7 @@ modifyComm = (id, channel)=>{
 },
 deleteComm = (id, channel)=>{
 	Loading();
-	_.http.req('GET', `${nData[9]}remove?ide=${id}&type=${channel}`)
+	_.http.req('GET', `${sData[4]}comment?ide=${id}&type=${channel}`)
 		.then(data=>{
 			if (data == '-1')
 				return _.err.log('Access denied');
@@ -1425,7 +1436,7 @@ editNews = (id, gdpsId)=>{
 	if (_.$.id('newsEdit'+id) !== null)
 		return;
 	Loading();
-	_.http.req('GET', `${nData[11]}get?id=${id}`)
+	_.http.req('GET', `${sData[0]}newsC?id=${id}`)
 		.then(data=>{
 			Loading(1);
 			let parsedData = JSON.parse(data),
@@ -1446,7 +1457,7 @@ modifyNews = (id, gdpsId)=>{
 			data = `id=${id}&gdps=${gdpsId}&title=${title}&text=${text}`;
 
 	Loading();
-	_.http.req('POST', `${nData[11]}edit`, data, urlEncoded)
+	_.http.req('POST', `${sData[1]}newsModify`, data, urlEncoded)
 		.then(data=>{
 			Loading(1);
 			_.wins[_.$.q(`[newsEdit${id}]`).id].close();
@@ -1466,7 +1477,7 @@ modifyNews = (id, gdpsId)=>{
 },
 deleteNews = (id, goBack)=>{
 	Loading();
-	_.http.req('GET', `${nData[11]}remove?ide=${id}`)
+	_.http.req('GET', `${sData[4]}newsPost?ide=${id}`)
 		.then(data=>{
 			if (data == '-1')
 				return _.err.log('Access denied');
@@ -1771,7 +1782,7 @@ pageWikiList = ()=>{
 	`</div>`;
 	innerMain(html);
 	Loading();
-	_.http.req('GET', `${nData[2]}wiki`)
+	_.http.req('GET', `${sData[7]}getWikis`)
 		.then(data=>{
 			let parsedData = JSON.parse(data),
 				html = renderWiki(parsedData);
@@ -1783,7 +1794,7 @@ pageWikiList = ()=>{
 globalNews = ()=>{
 	innerMain(gdpsNewsPage());
 	Loading();
-	_.http.req('GET', `${nData[2]}news?page=0`)
+	_.http.req('GET', `${sData[0]}newsAll?page=0`)
 		.then(data => {
 			_.link.set('news');
 			Loading(1);
@@ -1833,7 +1844,7 @@ globalVacs = ()=>{
 	`</div>`;
 	innerMain(html);
 	Loading();
-	_.http.req('GET', `${nData[2]}vacans?page=0`)
+	_.http.req('GET', `${sData[8]}getAll?page=0`)
 		.then(data => {
 			Loading(1);
 			let parsedData = JSON.parse(data);
@@ -1911,7 +1922,7 @@ helperNews = (gdpsId, renderOwnButton = 0)=>{
 	}
 	innerMain(gdpsNewsPage(renderNazad, gdpsId, backFunc));
 	Loading();
-	_.http.req('GET', `${nData[10]}news?id=${gdpsInt}`)
+	_.http.req('GET', `${sData[0]}news?id=${gdpsInt}`)
 		.then(data=>{
 			_.link.set('news/list='+gdpsId+'|'+renderOwnButton);
 			Loading(1);
@@ -1971,7 +1982,7 @@ insertBtn = (lastUse, transText = 'showMore', useRemover = 1, group = '')=>{ // 
 deviceAddForm = ()=>{
 	let html = pHeader()+
 	`<div id=helperContent>`+
-		`<form class="frameprofile" method=post onsubmit="return enterFormData(this,'deviceAdd${php}')">`+
+		`<form class="frameprofile" method=post onsubmit="return enterFormData(this,'${sData[1]}deviceAdd')">`+
 			`<h1${getTrans('deviceNotTrust01')}/h1>`+
 			`<p${getTrans('deviceNotTrust02')}/p>`+
 			`<input type=hidden name=device value='${fp.staticName}'>`+
@@ -2035,7 +2046,7 @@ newsWindow = (contentId = 0, contentType = 'c')=>{
 	let html = 
 	`<div id=helperContentProfile>`+
 		`<h1 id=blacktext${getTrans('newPost')}/h1>`+
-		`<form method=post onsubmit="return enterFormData(this,'${nData[11]}add')">`+
+		`<form method=post onsubmit="return enterFormData(this,'newsPost')">`+
 			`<input style=width:90% class=framelabel type=title name=title${getTrans('addCamp01', 'input')}<br>`+
 			`<textarea style=width:90%;height:64px class=framelabel name=text ${getTrans('newsText', 'textarea')}/textarea><br>`+
 			`<progress max=1 value=0 id=newsFileProg style=display:none></progress><br>`+
@@ -2053,7 +2064,7 @@ ADwrite = (userId = '')=>{
 	let anonymusSend = `<p><input type=checkbox name=anonymus> Send as Object hub</p>`;
 	_.win.open('writeAlarm', 
 		`<h1>Write to support</h1>`+
-		`<form onsubmit="return enterFormData(this,'${nData[5]}writeAlarm')">`+
+		`<form onsubmit="return enterFormData(this,'writeAlarm')">`+
 			`<input name=windowId value={winId} type=hidden>`+
 			`<input placeholder="userId (not username)" class=framelabel ${thisUser.role === 0 ? 'type=hidden value=0':'type=text value="'+userId+'"'} name=user><br>`+
 			`<input placeholder=title class=framelabel name=title><br>`+
@@ -2126,7 +2137,7 @@ reportParser = (formObj, url)=>{
 gdpsReport = (gdpsId)=>{
 	_.win.open('REPform',
 		`<h1${getTrans('report01')}/h1>
-		<form id={winId}formREP onsubmit="return reportParser(this,'${nData[2]}reportGdps')">
+		<form id={winId}formREP onsubmit="return reportParser(this,'${sData[2]}reportGdps')">
 			<input type=hidden value="{winId}" name=windowId>
 			<input name=gdps value="${gdpsId}" type=hidden>
 			<textarea style="width:250px;height:100px" class=framelabel name=text${getTrans('report02', 'textarea')}/textarea><br>
@@ -2138,7 +2149,7 @@ gdpsReport = (gdpsId)=>{
 forumReport = (postId)=>{
 	_.win.open('REPform2', 
 		`<h1${getTrans('report01')}/h1>
-		<form id={winId}formREP onsubmit="return reportParser(this,'${nData[2]}reportGdps')">
+		<form id={winId}formREP onsubmit="return reportParser(this,'${sData[2]}reportGdps')">
 			<input type=hidden value="{winId}REPform2" name=windowId>
 			<input name=gdps value="${postId}" type=hidden>
 			<textarea style="width:250px;height:100px" class=framelabel name=text${getTrans('report03', 'textarea')}/textarea><br>
@@ -2159,7 +2170,7 @@ getConfInfo = (step = 0)=>{
 	} else {
 		let password = _.$.id('LGpassword').value;
 		Loading();
-		helperRequest(`${sData[5]}getAccInfo${php}`, 'password='+password)
+		helperRequest(`${sData[5]}getAccInfo`, 'password='+password)
 			.then(data=>{
 				if (data == '-1') {
 					megaAlert('wrongPass');
@@ -2366,13 +2377,13 @@ LIKES = {
 	// каждый ключ объекта - канал, каждый канал содержит массив где минусовое число лайк а плюсовое дизлайк
 	data: {
 		// некоторых классов тут нет так как они будут удалены из ошхаба в ближайшем обновлении, как пример форумы, и страницы вики ибо там оно не будет нужно (максимум комменты но оно не имеет никакого отношения к сервису лайков)
-		"p": new Set(),
-		"c": new Set(),
-		"n": new Set(),
-		"g": new Set(),
-		"w": new Set(),
-		"f": new Set(),
-		"v": new Set(),
+		"p": new Set(), // все проекты (канал >= 0)
+		"c": new Set(), // комментарии (нет это не кемпы, мио не тупи)
+		"n": new Set(), // новости
+		"g": new Set(), // "гайды" АКА страницы в вики
+		"w": new Set(), // сами вики
+		"f": new Set(), // форумы ну вроде бы
+		"v": new Set(), // вакансии
 	},
 	chIdToStr: {
 		0:	'p',
@@ -2381,7 +2392,7 @@ LIKES = {
 		3:	'c',
 		4:	'c',
 		5:	'c',
-		6:	'c',
+		6:	'n',
 		7:	'g',
 		8:	'w',
 		9:	'f',
@@ -2460,7 +2471,7 @@ LIKES = {
 	init() {
 		if (!token)
 			return false;
-		_.http.req('GET', `${nData[2]}likesT`).then(data=>{
+		_.http.req('GET', `${sData[2]}likesT`).then(data=>{
 			let parsedData = JSON.parse(data);
 			console.log(parsedData)
 			for (let i in parsedData)
@@ -2474,7 +2485,7 @@ sendLike = (id, channel, isComm = 0)=>{
 		return megaAlert('needLogin');
 
 	Loading();
-	_.http.req('POST', `${nData[2]}like?ide=${id}&type=${channel}`)
+	_.http.req('POST', `${sData[1]}like?ide=${id}&type=${channel}`)
 		.then(data=>{
 			let likeValue = JSON.parse(data),
 				likePlace = 'likesCount',
@@ -2496,7 +2507,7 @@ sendDislike = (id, channel, isComm = 0)=>{
 		return megaAlert('needLogin');
 
 	Loading();
-	_.http.req('POST', `${nData[2]}dislike?ide=${id}&type=${channel}`)
+	_.http.req('POST', `${sData[1]}dislike?ide=${id}&type=${channel}`)
 		.then(data=>{
 			let likeValue = JSON.parse(data),
 				likePlace = 'likesCount',
@@ -2540,7 +2551,42 @@ repaintLikeButton = (id, isComm, liketype = 0)=>{
 },
 // #endregion
 // #region уведомления!
-
+/*
+ * Подписки!
+ *
+ * Я не знаю что вам сказать тут, технически они слизаны с вакансий потому что мне так удобно
+ */
+subRespond = (gdpsId)=>{
+	Loading();
+	_.http.req('GET', `${nData[10]}sub?id=${gdpsId}`)
+		.then(aplId=>{
+			let vacId = gdpsId;
+			Loading(1);
+			megaAlert('reported');
+			let applyBtn = _.$.id('a'+vacId);
+			if (applyBtn) {
+				applyBtn.setAttribute('data-trans', 'vacResponded');
+				applyBtn.setAttribute('onclick', `vacUnrespond(${vacId},${aplId})`);
+				applyBtn.textContent = getTrans('vacResponded',0);
+			}
+		})
+		.catch(e=>{console.error(e);_.err.handleRejection(e)});;
+},
+subUnrespond = (vacId, aplId)=>{
+	Loading();
+	_.http.req('GET', `${nData[10]}unsub?id=${aplId}&vacId=${vacId}`)
+		.then(data=>{
+			Loading(1);
+			megaAlert('otmena');
+			let applyBtn = _.$.id('a'+vacId);
+			if (applyBtn) {
+				applyBtn.setAttribute('data-trans', 'vacRespond');
+				applyBtn.setAttribute('onclick', `vacRespond(${vacId})`);
+				applyBtn.textContent = getTrans('vacRespond',0);
+			}
+		})
+		.catch(e=>{console.error(e);_.err.handleRejection(e)});;
+},
 pushSubscribe = async ()=>{
 	if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
 		console.warn('push не поддерживается этим браузером');
@@ -2572,6 +2618,7 @@ pushSendToServer = async (sub)=>{
 		data = `endpoint=${encodeURIComponent(j.endpoint)}&`+
 				`p256dh=${encodeURIComponent(j.keys.p256dh)}&`+
 				`auth=${encodeURIComponent(j.keys.auth)}`,
+		// FIXME: привести к nData/sData нормализации
 		res = await _.http.req('POST', '/v1/sub.php', data);
 
 	if (res !== '1') {
@@ -2896,7 +2943,7 @@ renderVacancy = (parsedData, isAdmin = thisUser.role,renderMethod = 'm')=>{
 },
 vacRespond = (vacId)=>{
 	Loading();
-	_.http.req('GET', `${nData[8]}apply?id=${vacId}`)
+	_.http.req('GET', `${sData[8]}apply?id=${vacId}`)
 		.then(aplId=>{
 			Loading(1);
 			megaAlert('reported');
@@ -2911,7 +2958,7 @@ vacRespond = (vacId)=>{
 },
 vacUnrespond = (vacId, aplId)=>{
 	Loading();
-	_.http.req('GET', `${nData[8]}unapply?id=${aplId}&vacId=${vacId}`)
+	_.http.req('GET', `${sData[8]}removeApl?id=${aplId}&vacId=${vacId}`)
 		.then(data=>{
 			Loading(1);
 			megaAlert('otmena');
@@ -3214,7 +3261,7 @@ enterFormData = (form, sendPlace)=>{
 				getForumPost(parsedData[0],parsedData[1]);
 				_.wins[_.$.q('[forumpost]').id].close();
 				break;
-			case `${nData[11]}add`:
+			case 'newsPost':
 				const funcs = {
 					'p': getPere,
 					't': getTele,
@@ -3224,17 +3271,17 @@ enterFormData = (form, sendPlace)=>{
 				gId = FORMDATA.get('gdps');
 				funcs[gId[0]](gId.slice(1));
 				break;
-			case `${nData[5]}writeAlarm`:
+			case `writeAlarm`:
 				_.wins[FORMDATA.get('windowId')].close();
 				break;
-			case `${nData[2]}reportGdps`:
+			case `report`:
 				megaAlert('reported', 1000);
 				_.wins[FORMDATA.get('windowId')].close();
 				break;
 			case sData[1]+'newGuide'+php:
 				getGuide(data, FORMDATA.get('wikiId'));
 				break;
-			case `${nData[7]}editGuide`:
+			case `${sData[1]}editGuide${php}`:
 				getGuide(data, FORMDATA.get('wikiId'));
 				break;
 			case sData[1]+'newWiki'+php:
@@ -3247,10 +3294,10 @@ enterFormData = (form, sendPlace)=>{
 				yourWikies['w'+parsedData.ID] = parsedData;
 				profilePage('');wikiControl(parsedData.ID);
 				break;
-			case `${nData[8]}add`:
+			case `${sData[1]}vacsAdd${php}`:
 				getVacancies(FORMDATA.get('channel'),FORMDATA.get('id'));
 				break;
-			case `${nData[8]}edit`:
+			case `${sData[1]}vascEdit${php}`:
 				if (_.$.id('profileWindow')) 
 					getVacancies(FORMDATA.get('channel'),FORMDATA.get('gdpsId'));
 				else {
@@ -3489,7 +3536,7 @@ verifyWindow = ()=>{
 },
 otherProfileMini = (userId)=>{
 	Loading();
-	_.http.req('GET', `${nData[2]}profile?id=${userId}`)
+	_.http.req('GET', `${sData[0]}getUser${php}?id=${userId}`)
 	.then(data=>{
 		let userData = JSON.parse(data);
 		_.link.set('profiles='+userId, userData.username);
@@ -3517,7 +3564,7 @@ otherFindsWindow = (channel, userId)=>{
 	let [smallString, bigString] = GDPSswitchChannel(channel);
 	_.link.set('profiles/'+smallString+'s='+userId);
 	Loading();
-	_.http.req('GET', `${nData[12]}gdpses?id=${userId}&type=${channel}`)
+	_.http.req('GET', `${sData[0]}getAdded${bigString}${php}?id=${userId}&type=${channel}`)
 	.then(data=>{
 		let parsedData = JSON.parse(data),
 			gdpses = "";
@@ -3550,7 +3597,7 @@ otherPeresWindow = (userId)=>{
 otherWikisWindow = (userId)=>{
 	_.link.set('profiles/wikis='+userId);
 	Loading();
-	_.http.req('GET', `${nData[12]}wikis?id=${userId}`)
+	_.http.req('GET', `${sData[0]}getUserGuides${php}?id=${userId}`)
 	.then(data=>{
 		let parsedData = JSON.parse(data),
 			gdpses = "";
@@ -3751,7 +3798,7 @@ let createBasicError = type=>{
 		_.$.D.body = null;
 	else if (type == 1) {
 		Loading();
-		_.http.req(`${nData[2]}curl`)
+		_.http.req(`${sData[2]}curl`)
 			.then(data=>{
 				JSON.parse(data);
 				Loading(1);
@@ -3882,22 +3929,50 @@ lsClear = ()=>{
 	_.link.remove('lsClear');
 },
 
-loader = ()=>{
-	_.link.set('loader')
-	let ver = (v, date='', desc='')=>`<tr>
-		<td>${basicButton(`>${v}<`,`(document.cookie='cli_ver=${v};path=/;max-age=${60*60*24*365}');location.search='${_.link.compile().join('&').slice(6)}'`)}</td>
-		<td>${date}</td>
-		<td>${desc}</td>
-	</tr>`;
-	return `<div style=display:flex;justify-content:center;align-items:center;min-height:100vh;flex-direction:column>
-		<h1>OJHUB LOADER v1.00</h1>`+
-		`<table border=1 class=frameprofile>
-			<tr><td>${basicButton('>latest<',`(document.cookie='cli_ver=;path=/;max-age=0');location.search='${_.link.compile().join('&').slice(6)}'`)}</td></tr>${
-			ver('0.97.6', '15 Jun 2026', 'current latest')+
-			ver('0.97.5', '10 Jun 2026', 'rev. 1')
-		}</table>`+
-	`</div>`
+// #endregion
+// #region проверка здоровья
+nextStep = 0,
+
+// TODO: сделать реальные провери ошибок
+heartStep = [
+	/* ФОРМАТ ОШИБОК:
+	 *
+	 * [0,null] = всё впорядке
+	 * [1,"err"] = вывести второй индекс массива (то есть текст ошибки)
+	 *
+	 * я вдохновился golang когда придумывал формат ошибок
+	 */
+
+	() => {
+		if (typeof thisUser !== "object" || thisUser === null)
+			return [1, "thisUser isnt object"]
+		if (Object.keys(thisUser).length < 9)
+			return [1, "thisUser lost keys"]
+		return [0, null];
+	},
+
+	() => {
+		return [0, null];
+	},
+
+],
+
+heartBeet = ()=>{
+	if (!heartStep.length)
+		return;
+	console.log(nextStep);
+	let step = heartStep[nextStep];
+	try {
+		const resp = step();
+		if (resp[0] !== 0)
+			_.err.log(resp[1])
+	} catch (e) {
+		_.err.log(`heartBeet error on step ${nextStep}, error:`, e)
+	}
+	nextStep = (nextStep + 1) % heartStep.length;
 };
+
+//setInterval(heartBeet, 1000);
 // #endregion
 
 reStart();

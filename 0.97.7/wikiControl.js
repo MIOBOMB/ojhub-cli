@@ -135,8 +135,7 @@ getGuidesAdminControl = (wikiId, page = 0)=>{
 		innerWikiControl(html);
 	}
 	Loading();
-	_.http.req('GET', `${nData[7]}guidesAdmin?wiki=${wikiId}&page=${page}`)
-	// helperRequest(`${sData[0]}getGuidesAdmin${php}?wiki=${wikiId}&page=${page}`)
+	helperRequest(`${sData[0]}getGuidesAdmin${php}?wiki=${wikiId}&page=${page}`)
 	.then(data=>{
 		let parsedData = JSON.parse(data);
 
@@ -539,8 +538,7 @@ editGuide = (guideId, wikiId, backpage = 0)=>{
 	let langs = '';
 	let guidWin = helperSettings.openGuidesInWindow;
 	Loading();
-	_.http.req('GET', `${nData[7]}guideEdit?id=${guideId}`)
-	//helperRequest(`${sData[1]}editGuide${php}?id=${guideId}`)
+	helperRequest(`${sData[1]}editGuide${php}?id=${guideId}`)
 	.then(data=>{
 		if (data == '["NONE"]') {
 			profilePage();
@@ -565,8 +563,8 @@ editGuide = (guideId, wikiId, backpage = 0)=>{
 
 		let html = 
 		`<h1${getTrans('guides01')}/h1>`+
-		// (guidWin == 0 ? `<button type=button class=loginbtn onclick="${backpage === 1 ? `profilePage('');getGuidesAdminControl(${wikiId})` : `pageGuides(${wikiId})`}"${getTrans('otmena')}/button><br>` : '')+
-		`<form id=GDPSesPlace${guideId} style=padding:8px method=post onsubmit="return enterFormData(this,'${nData[7]}guideEdit?id=${guideId}')">`+
+		//(guidWin == 0 ? `<button type=button class=loginbtn onclick="${backpage === 1 ? `profilePage('');getGuidesAdminControl(${wikiId})` : `pageGuides(${wikiId})`}"${getTrans('otmena')}/button><br>` : '')+
+		`<form id=GDPSesPlace${guideId} style=padding:8px method=post onsubmit="return enterFormData(this,'${sData[1]}guideEdit?id=${guideId}')">`+
 			`<input name=title class=guidInp id=title${guideId} value="${guideinfo[1]}" style="width:calc(100% - 4px);font-size:calc(var(--def-font)*2)"${getTrans('guides02', 'input')}<br>`+
 			`<label${getTrans('gdpsLang00')}/label> `+
 			`<select id="langs${guideId}" class="framelabel" name="language" required>`+

@@ -30,7 +30,6 @@ _.$ = {
 	cliRect: e=>			e.getBoundingClientRect(), // сокращение чтобы не писать 25+ символов
 }
 
-// ТОСТЫ ЭТО ТЕСТЫ АЛО БЛЯТЬ
 toastsErorrsLol = new _.toast(
 	'errors',
 	_.$.id('alerts'),
@@ -151,6 +150,7 @@ _.link.actions = {
 	news: ()=>               {globalNews()},
 	'news/': {
 		'': ()=>             {globalNews()},
+		// FIXME: перевести на новое поведение роутера
 		comms: (postId)=>    {let d = postId.split('|');getNewsWithComments(d[0], d[1], d[2])},
 		list: (gdpsId)=>     {let d = gdpsId.split('|');helperNews(d[0], d[1])},
 	},

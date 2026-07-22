@@ -43,7 +43,7 @@ editNickPre = ()=>{
 },
 editNick = ()=>{
 	let newNick = _.$.id('newNick2').value;
-	_.http.req('GET', `${nData[5]}setNickname?name=${newNick}`)
+	_.http.req('GET', `${sData[5]}setNickname${php}?name=${newNick}`)
 		.then(data=>{
 			let timename = thisUser.username.slice();
 			thisUser.username = data;
@@ -63,7 +63,7 @@ editResumePre = ()=>{
 },
 editResume = ()=>{
 	let newResume = _.$.id('newResume2').value.replaceAll('\n','\\n');
-	_.http.req('POST', `${nData[5]}setResume`, `name=${newResume}`)
+	_.http.req('POST', `${sData[5]}setResume${php}`, `name=${newResume}`)
 		.then(data=>{
 			thisUser.resume = data;
 			if (data != '')
@@ -80,7 +80,7 @@ editSocialsPre = ()=>{
 },
 editSocials = ()=>{
 	let newSocials = _.$.id('newSocials2').value.replaceAll('\n','\\'+'n');
-	_.http.req('POST', `${nData[5]}setSocials`, `name=${newSocials}`)
+	_.http.req('POST', `${sData[5]}setSocials${php}`, `name=${newSocials}`)
 		.then(data=>{
 			thisUser.socials = data;
 			if (data != '')
@@ -380,7 +380,7 @@ coownersMenu = (id, contentType)=>{
 	if (_.$.q(`[coowners_${contentType}_${id}]`))
 		return 0;
 	Loading();
-	_.http.req('GET', `${nData[10]}owners?id=${id}&type=${contentType}`)
+	_.http.req('GET', `${sData[0]}getOwners${php}?id=${id}&type=${contentType}`)
 		.then(data=>{
 			let parsedData = JSON.parse(data),
 			tables = '';
@@ -417,7 +417,7 @@ coownersMenu = (id, contentType)=>{
 ownersAdd = (id, contentType)=>{
 	let userData = _.$.id('addown').value;
 	Loading();
-	_.http.req('GET', `${nData[10]}addOwner?id=${id}&type=${contentType}&user=${userData}`)
+	_.http.req('GET', `${sData[1]}permAdd${php}?id=${id}&type=${contentType}&user=${userData}`)
 		.then(data=>{
 			if (data == '-2')
 				return _.err.log('Access denied');
@@ -438,7 +438,7 @@ ownersAdd = (id, contentType)=>{
 },
 deleteOwner = (contentId, contentType, userId)=>{
 	Loading();
-	_.http.req('GET', `${nData[10]}deleteOwner?id=${contentId}&type=${contentType}&user=${userId}`)
+	_.http.req('GET', `${sData[1]}perm${php}?id=${contentId}&type=${contentType}&user=${userId}`)
 		.then(data=>{
 			if (data == '-2')
 				return _.err.log('Access denied');
@@ -567,7 +567,7 @@ removeVacPre = (id, gdpsId)=>{
 },
 removeVac = (id, gdpsId, winId)=>{
 	Loading();
-	_.http.req('GET',`${nData[8]}remove?id=${id}&gdpsId=${gdpsId}`)
+	_.http.req('GET',`${sData[8]}removeVac${php}?id=${id}&gdpsId=${gdpsId}`)
 		.then(data=>{
 			if (data == 1) {
 				_.$.id('v'+id).remove();
@@ -588,7 +588,7 @@ removeAplPre = (id, gdpsId)=>{
 },
 removeApl = (id, gdpsId, winId)=>{
 		Loading();
-		_.http.req('GET', `${nData[8]}removeApl?id=${id}&gdpsId=${gdpsId}`)
+		_.http.req('GET', `${sData[8]}removeApl${php}?id=${id}&gdpsId=${gdpsId}`)
 			.then(data=>{
 				if (data == 1) {
 					_.$.id('a'+id).remove();
@@ -730,7 +730,7 @@ removeDevice = (type, deviceId, isCurrent = '')=>{
 			_.win.close(type);
 		return gLogout();
 	}
-	_.http.req('GET', `${nData[5]}removeDevice?id=${deviceId}`)
+	_.http.req('GET', `${sData[5]}removeDevice`, `id=${deviceId}`)
 		.then(()=>{
 			Loading(1);
 			_.$.id('device'+deviceId).remove();
@@ -954,7 +954,7 @@ profileDevices = ()=>{
 	`</div>`;
 	innerProfile(html);
 	Loading();
-	_.http.req('GET', `${nData[5]}devices`)
+	_.http.req('GET', `${sData[5]}devices`)
 	.then(data=>{
 		// let parsedData = JSON.parse(data);
 		let parsedData = JSON.parse(data),
@@ -1146,7 +1146,7 @@ addFind = (channel)=>{
 	let html = 
 	`<div id=helperContentProfile>`+
 		`<h1${getTrans('add'+bigString)}/h1>`+ // ${smallString}Add${php}
-		`<form method=POST enctype="multipart/form-data" action='${nData[10]}add' onsubmit="if (tryAddShow()) return enterFormData(this,'${nData[10]}add');else return false;">`+
+		`<form method=POST enctype="multipart/form-data" action='${sData[1]}${smallString}Add${php}' onsubmit="if (tryAddShow()) return enterFormData(this,'${sData[1]}${smallString}Add${php}');else return false;">`+
 			`<input type=hidden name=channel value=${channel}>`+
 			`<label${getTrans('add'+bigString+'01')}/label><br><input class=framelabel type=text name=title style=width:100% required${getTrans(smallString+'Input01', 'input')}<br>`+
 			`<label${getTrans('add'+bigString+'02')}/label><br><textarea class=framelabel name=description style=width:100% required${getTrans(smallString+'Input02', 'textarea')}/textarea><br>`+
@@ -1232,7 +1232,7 @@ editFind = (channel, gdpsId)=>{
 					bigString = 'Tele';
 					break;
 			}
-	_.http.req('GET', `${nData[10]}edit?id=${gdpsId}`)
+	helperRequest('GET', `${sData[1]}${smallString}Edit?id=${gdpsId}`)
 	.then (data=>{
 		_.link.set('edit'+bigString+'='+gdpsId);
 		let parsedData = JSON.parse(data),
@@ -1283,7 +1283,7 @@ editFind = (channel, gdpsId)=>{
 		html = 
 		`<div id=helperContentProfile>`+
 			`<h1${getTrans('edit'+bigString)}/h1>`+ //${smallString}Edit${php}
-			`<form method=POST enctype="multipart/form-data" action='${nData[10]}edit' onsubmit="return enterFormData(this,'${nData[10]}edit?id=${gdpsId}')">`+
+			`<form method=POST enctype="multipart/form-data" action='${sData[1]}${smallString}Edit' onsubmit="return enterFormData(this,'${sData[1]}${smallString}Edit?id=${gdpsId}')">`+
 				`<label${getTrans('add'+bigString+'01')}/label><br><input value="${title}" class=framelabel type=text name=title style=width:100% required${getTrans(smallString+'Input01', 'input')}<br>`+
 				`<label${getTrans('add'+bigString+'02')}/label><br><textarea class=framelabel name=description style=width:100% required${getTrans(smallString+'Input02', 'input')}${description}</textarea><br>`+
 				`<label${getTrans('addCamp02a')}/label><br><input value="${short}" class=framelabel type=text name=short style=width:100%${getTrans('campInput02a', 'input')}<br>`+
@@ -1386,7 +1386,7 @@ addVacs = (channel, gdpsId)=>{
 	let html = 
 	`<div id=helperContentProfile>`+
 		`<h1${getTrans('add'+bigString)}/h1>`+
-		`<form method=POST enctype="multipart/form-data" action='${nData[8]}add' onsubmit="return enterFormData(this,'${nData[8]}add')">`+
+		`<form method=POST enctype="multipart/form-data" action='${sData[1]}${smallString}Add${php}' onsubmit="return enterFormData(this,'${sData[1]}${smallString}Add${php}')">`+
 			`<label${getTrans('add'+bigString+'01')}/label><br><input class=framelabel type=text name=title style=width:100% required${getTrans(smallString+'Input01', 'input')}<br>`+
 			`<label${getTrans('add'+bigString+'02')}/label><br><textarea class=framelabel name=text style=width:100% required${getTrans(smallString+'Input02', 'textarea')}/textarea><br>`+
 			`<label${getTrans('addCamp02a')}/label><br><input class=framelabel type=text name=short style=width:100%${getTrans('campInput02a', 'input')}<br>`+
@@ -1417,7 +1417,7 @@ editVacs = (channel, gdpsId, vacId)=>{
 	let html = ``,
 			smallString = 'vacs',
 			bigString = 'Vacs';
-	_.http.req('GET', `${nData[8]}edit?id=${vacId}&gdpsId=${gdpsId}`)
+	helperRequest(`${sData[8]}edit${php}`, `id=${vacId}&gdpsId=${gdpsId}`)
 		.then (data=>{
 			if (_.$.id('profileWindow')) 
 				_.link.set('edit'+bigString+'='+channel+'|'+gdpsId+'|'+vacId);
@@ -1441,7 +1441,7 @@ editVacs = (channel, gdpsId, vacId)=>{
 
 			html = 
 			`<h1${getTrans('edit'+bigString)}/h1>`+
-			`<form method=POST enctype="multipart/form-data" action='${nData[8]}edit' onsubmit="return enterFormData(this,'${nData[8]}edit?id=${gdpsId}')">`+
+			`<form method=POST enctype="multipart/form-data" action='${sData[1]}${smallString}Edit${php}' onsubmit="return enterFormData(this,'${sData[1]}${smallString}Edit${php}?id=${gdpsId}')">`+
 				`<label${getTrans('add'+bigString+'01')}/label><br><input value="${title}" class=framelabel type=text name=title style=width:100% required${getTrans(smallString+'Input01', 'input')}<br>`+
 				`<label${getTrans('add'+bigString+'02')}/label><br><textarea class=framelabel name=text style=width:100% required${getTrans(smallString+'Input02', 'input')}${text}</textarea><br>`+
 			`<label${getTrans('addCamp02a')}/label><br><input value="${short}" class=framelabel type=text name=short style=width:100%${getTrans('campInput02a', 'input')}<br>`+
@@ -1474,7 +1474,7 @@ editVacs = (channel, gdpsId, vacId)=>{
 },
 getVacancies = (channel, projId)=>{
 	Loading();
-	_.http.req('GET', `${nData[8]}admin?id=${projId}`)
+	_.http.req('GET', `${sData[8]}get${php}?id=${projId}`)
 		.then(data=>{
 			Loading(1);
 			let parsedData = JSON.parse(data),
@@ -1495,7 +1495,7 @@ getVacancies = (channel, projId)=>{
 };
 vacResponses = (channel, projId, vacId)=>{
 	Loading();
-	_.http.req('GET',`${nData[8]}applies?vacid=${vacId}`)
+	_.http.req('GET',`${sData[8]}applies?vacid=${vacId}`)
 		.then(data=>{
 			Loading(1);
 			let parsedData = JSON.parse(data),
