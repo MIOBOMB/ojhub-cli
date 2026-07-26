@@ -9,7 +9,6 @@ MediaRender = (comicText)=>{
 	for (let i = 0; i < comicArray.length; i++) {
 		comicArr['p'+i] = `<div class=comicImage id=p${i}><img style=max-width:100%;max-height:80vh src=${comicArray[i]}></div> `;
 	};
-	console.log(JSON.stringify(comicArr));
 	let comicStrPre = '';
 	
 	comicStrPre = Object.values(comicArr).join('');
@@ -65,8 +64,6 @@ wikiText = (wikitext)=>{
 
 			let providedArgs = argsStr ? argsStr.split('|').map(arg => arg.trim()) : [];
 			
-			console.log(templateName, templateFunction, providedArgs);
-
 			return templateFunction(...providedArgs);			
 		} catch (error) {
 			return `<div class="template-error">TEMPLATE FAIL: ${error.message}</div>`;
@@ -164,7 +161,6 @@ renderGuideMini = (parsedData, page = 0)=>{
 
 	for (let Id in parsedData) {
 		let guid = parsedData[Id];
-		console.log(guid)
 		if (!Array.isArray(guid)) {
 			if (guid.ID != 0)
 				innerGdpsPlace(insertBtn('openForum('+guid.ID+')', 'forumHas', 0),512);
@@ -383,9 +379,9 @@ pageGuides = (wiki, backButton = '')=>{
 getGuide = (id, wikiId = 0)=>{
 	globalWiki = wikiId;
 	let html = pHeader()+
-		`<div id=helperContent>`+
-			`<h1 id=title></h1>`+
-			`<div id=texts></div>`+
+		`<div id=helperContent class=guidePageLimiter>`+
+			`<h1 id=title class=gdps-forum></h1>`+
+			`<div id=texts class=gdps-forum></div>`+
 			`<div id=innerEDIT class=gdps-forum><button class=loginbtn onclick="pageGuides(${wikiId})"${getTrans('back')}/button></div>`+
 			`<div align=center style="margin:8px">`+
 				contentSendCommForm(id+',2,6')+
@@ -402,14 +398,10 @@ getGuide = (id, wikiId = 0)=>{
 				Loading(1);
 				return;
 			}
+			console.log(JSON.parse(data));
 			let parsedData = JSON.parse(data),
 				guideinfo = parsedData['guideinfo'],
-				guidedataPre = parsedData['guidedata']
-        			.replace(/\r\n/g, '\\n')
-			        .replace(/\r/g, '\\n')
-	        		.replace(/\n/g, '\\n')
-			        .replace(/\t/g, '\\t'),
-				guidedata = JSON.parse(guidedataPre),
+				guidedata = parsedData['guidedata']
 				comments = parsedData['comments'],
 				templates = parsedData['templates'],
 				html = '';
@@ -420,7 +412,6 @@ getGuide = (id, wikiId = 0)=>{
 
 			if (Object.keys(templates).length !== 0)
 				for (let template in templates) {
-					console.log(template);
 					if (!wikiTemplates[wikiId].hasOwnProperty(template)) {
 						let t = templates[template],
 						doneCode = t[1]
@@ -429,10 +420,8 @@ getGuide = (id, wikiId = 0)=>{
 							.replaceAll('>', "&gt;")
 							.replaceAll('"', "&quot;")
 							.replaceAll("'", "&#039;");
-						console.log(doneCode);
 						wikiTemplates[wikiId][template] = function(){};
 						wikiTemplates[wikiId][template] = new Function(...t[0], 'return '+t[2]+'(`'+doneCode+'`)');
-						console.log(wikiTemplates[wikiId][template]);
 					}
 				}
 
@@ -457,7 +446,9 @@ getGuide = (id, wikiId = 0)=>{
 				}
 				html +=
 				`<div class=frameguide>`+
-					content+
+					`<div style=margin:20px>`+
+						content+
+					`</div>`+
 				`</div><br>`;
 			});
 			html += guideinfo[2];

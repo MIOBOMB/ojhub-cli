@@ -6,8 +6,8 @@ setupLangFromDevpanel = async ()=>{
 
   console.log(file.name);
   console.log(text);
-  _.langs.main = JSON.parse(text);
-  getLink();
+  _.lang.main = JSON.parse(text);
+	_.link.get();
 };
 debugWindow = ()=>{
   let devPanel = _.$.q('[devpanel]');
@@ -34,7 +34,7 @@ debugWindow = ()=>{
   if (!location.search.includes('deh'))
     _.link.add('dev');
   let win = _.win.open('DEVPANEL',
-    `<h2>newHelper.js 2.1.2 BUILD ${helperBuildNum} ver ${helperStrVer}</h2>
+    `<h2>newHelper.js ${_.ver} BUILD ${helperBuildNum} ver ${helperStrVer}</h2>
     <p>COUNTRY: ${thisUser.cityData}</p>
     <p>UPLOAD LANG PACKET</p>
     <div style=background:black;text-align:left>

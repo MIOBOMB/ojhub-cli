@@ -1,9 +1,8 @@
 let 
 langList = ['RU', 'EN', 'UA'],
-helperStrVer = '0.97.33',
+helperStrVer = '0.96.3',
 currentLangVer = 13,
-helperBuildNum = 132,
-urlBuildNum = 133,
+helperBuildNum = 133,
 scritpsUrl = '/cli/'+helperStrVer,
 ignoreCap = false,
 renderBeta = false,

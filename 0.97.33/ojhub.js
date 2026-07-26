@@ -60,6 +60,8 @@ GDPSswitchChannel = (channel)=>{
 			return ['show', 'Show', 's', myGdpses[1]];
 		case 2:
 			return ['pere', 'Pere', 'p', myGdpses[2]];
+		default:
+			return ['camp', 'Camp', 'c', myGdpses[0]];
 	}
 },
 GDPSgetChannel = (channel)=>{
@@ -70,6 +72,8 @@ GDPSgetChannel = (channel)=>{
 			return myGdpses[1];
 		case 'p':
 			return myGdpses[2];
+		default:
+			return myGdpses[0];
 	}
 },
 helperSettings = {
@@ -235,7 +239,7 @@ reportError = (errorId)=>{
 		.catch(e=>{console.error(e);$.err.handlePromise(e)});;
 },
 baseApp = location.origin + location.pathname,
-baseWay = baseApp+'server/'+helperBuildNum
+baseWay = baseApp+'server/'+urlBuildNum
 sData = [
 	baseWay+'/content/',
 	baseWay+'/send/',

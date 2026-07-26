@@ -60,13 +60,15 @@ let thisUser = Slocal.get('StaticUserData') ? JSON.parse(Slocal.get('StaticUserD
 
 urlEncoded = {'Content-type':'application/x-www-form-urlencoded'},
 GDPSswitchChannel = (channel)=>{
-	switch (parseInt(channel)) {
+	switch (channel) {
 		case 0:
 			return ['camp', 'Camp', 'c', myGdpses[0]];
 		case 1:
 			return ['show', 'Show', 's', myGdpses[1]];
 		case 2:
 			return ['pere', 'Pere', 'p', myGdpses[2]];
+		default:
+			return ['camp', 'Camp', 'c', myGdpses[0]];
 	}
 },
 GDPSgetChannel = (channel)=>{
@@ -77,6 +79,8 @@ GDPSgetChannel = (channel)=>{
 			return myGdpses[1];
 		case 'p':
 			return myGdpses[2];
+		default:
+			return myGdpses[0];
 	}
 },
 helperSettings = {

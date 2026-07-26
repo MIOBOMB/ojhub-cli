@@ -165,7 +165,7 @@ newGuideFrame = (guideId, id = 0, customContent = null, textAreaHelp = '')=>{
 	let html =
 	`<div class=frameguide id=frame${guideId}-${id} style=position:relative>`+
 		`<input name=subtitle[] ${customContent !== null ? `value="${customContent[0]}"` : ''} type=hidden style=width:100%;font-size:calc(var(--def-font)*1.5)${getTrans('guides06', 'input')}<br>`+
-		imageButton(`${helperUrl}imgs/trash.svg`, `removeGuide(${guideId},${id})`, 'position:absolute;top:20px;right:20px')+
+		imageButton(`${helperUrl}imgs/trash.svg`, `removeGuide("${guideId}",${id})`, 'position:absolute;top:20px;right:20px')+
 		`<textarea name=subtext[] class=guidInp style=width:100%;height:240px${textAreaHelp}${customContent !== null ? customContent[1] : ''}</textarea>`+
 	`</div><br>`;
 
@@ -186,20 +186,21 @@ createGuide = (wikiId, backpage = 0)=>{
 		langs += `<option value="${lang}"${getTrans('gdpsLang'+lang)}/option>`;
 	});
 	let guidWin = helperSettings.openGuidesInWindow,
-			html = 
+		guidId = guidWin === 0 ? '0' : '{winId}'
+		html = 
 	`<h1${getTrans('guides01')}/h1>`+
 	// (guidWin == 0 ? `<button type=button class=loginbtn onclick="${backpage === 1 ? `profilePage('');getGuidesAdminControl(${wikiId})` : `pageGuides(${wikiId})`}"${getTrans('otmena')}/button><br>` : '')+
-	`<form id=GDPSesPlace{winId} style=padding:8px method=post onsubmit="return enterFormData(this,'${sData[1]}newGuide${php}')">`+
-		`<input name=title class=guidInp id=title{winId} style="width:calc(100% - 4px);font-size:calc(var(--def-font)*2)"${getTrans('guides02', 'input')}<br>`+
+	`<form id=GDPSesPlace${guidId} style=padding:8px method=post onsubmit="return enterFormData(this,'${sData[1]}newGuide${php}')">`+
+		`<input name=title class=guidInp id=title${guidId} style="width:calc(100% - 4px);font-size:calc(var(--def-font)*2)"${getTrans('guides02', 'input')}<br>`+
 		`<label${getTrans('gdpsLang00')}/label> `+
-		`<select id="langs{winId}" class="framelabel" name="language" required>`+
+		`<select id="langs${guidId}" class="framelabel" name="language" required>`+
 			langs+
 		`</select><br>`+
-		`<input name=img class=guidInp id=img{winId}${getTrans('guides05', 'input')}`+
-		`<div id=frames{winId}>`+
+		`<input name=img class=guidInp id=img${guidId}${getTrans('guides05', 'input')}`+
+		`<div id=frames${guidId}>`+
 		`</div>`+
 		// `<button type=button class=loginbtn onclick="newGuideFrame(guideEditorFrame)"${getTrans('guides03')}/button><br><br>`+
-		`<select id=framesSelector{winId} class=framelabel name=language required onchange=generateGuideframe({winId},this)>`+
+		`<select id=framesSelector${guidId} class=framelabel name=language required onchange=generateGuideframe("${guidId}",this)>`+
 			`<option selected disabled hidden${getTrans('guides03')}/option>`+
 
 			`<option value=Markdown>Markdown</option>`+
@@ -381,12 +382,10 @@ deleteTemplateWindow = (wikiId, template)=>{
 },
 renderFiles = (parsedData, wikiId = 0)=>{
 	let html = '';
-	console.log(parsedData);
 	for (let fileTitle in parsedData) {
 		let file = parsedData[fileTitle];
 		if (typeof file == 'number')
 			continue;
-		console.log(file);
 		html += 
 			`<div class=framegdps id="FILE-${fileTitle}" style=width:260px;height:260px>`+
 				`<div align=center>`+
@@ -422,12 +421,10 @@ wikiLoadTemplatesControl = (wikiId)=>{
 },
 renderTemplates = (parsedData, wikiId = 0)=>{
 	let html = '';
-	console.log(parsedData);
 	for (let templateName in parsedData) {
 		let t = parsedData[templateName];
 		if (typeof t == 'number')
 			continue;
-		console.log(t);
 		html += 
 			`<div class=framegdps id="TEMP-${templateName}" style=width:160px;height:120px>`+
 				`<div align=center>`+
@@ -511,10 +508,8 @@ saveTemplate = (wikiId, templateName)=>{
 	if (args.length !== 0) {
 		args.forEach(arg=>argsList.push(arg.value));
 		argsList = '&arg[]='+argsList.join('&arg[]=');
-		console.log(templateName, content, argsList);
 	} else
 		args = '';
-	console.log(args);
 	let realTemplateName = templateName;
 	if (_.$.id(templateName+'-name'))
 		realTemplateName = _.$.id(templateName+'-name').value;

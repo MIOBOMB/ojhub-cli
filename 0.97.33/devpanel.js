@@ -36,9 +36,7 @@ debugWindow = ()=>{
       `renderBeta ${checkbox(renderBeta, 'renderBeta=this.checked')}<br>`+
       // `API-ver <input value=${helperBuildNum} style=color:black onchange=formSdata(this.value)>`+
       `API-ver <select style=color:black onchange=formSdata(baseApp+'server/'+this.value)>`+
-        option(128)+
-        option(131)+
-        option(132)+
+        option(133)+
       `</select><br>`+
       devBtn('CLOSE ALL ERRORS', `$qa('[iserror]').forEach(el=>{subWindows.close(el.id);});`)+'<br><br>'+
     `</div>`+

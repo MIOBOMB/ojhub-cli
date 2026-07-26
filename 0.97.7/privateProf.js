@@ -43,7 +43,7 @@ editNickPre = ()=>{
 },
 editNick = ()=>{
 	let newNick = _.$.id('newNick2').value;
-	_.http.req('GET', `${sData[5]}setNickname${php}?name=${newNick}`)
+	helperRequest(`${sData[5]}setNickname${php}?name=${newNick}`)
 		.then(data=>{
 			let timename = thisUser.username.slice();
 			thisUser.username = data;
@@ -63,7 +63,7 @@ editResumePre = ()=>{
 },
 editResume = ()=>{
 	let newResume = _.$.id('newResume2').value.replaceAll('\n','\\n');
-	_.http.req('POST', `${sData[5]}setResume${php}`, `name=${newResume}`)
+	helperRequest(`${sData[5]}setResume${php}`, `name=${newResume}`)
 		.then(data=>{
 			thisUser.resume = data;
 			if (data != '')
@@ -80,7 +80,7 @@ editSocialsPre = ()=>{
 },
 editSocials = ()=>{
 	let newSocials = _.$.id('newSocials2').value.replaceAll('\n','\\'+'n');
-	_.http.req('POST', `${sData[5]}setSocials${php}`, `name=${newSocials}`)
+	helperRequest(`${sData[5]}setSocials${php}`, `name=${newSocials}`)
 		.then(data=>{
 			thisUser.socials = data;
 			if (data != '')
@@ -380,7 +380,7 @@ coownersMenu = (id, contentType)=>{
 	if (_.$.q(`[coowners_${contentType}_${id}]`))
 		return 0;
 	Loading();
-	_.http.req('GET', `${sData[0]}getOwners${php}?id=${id}&type=${contentType}`)
+	helperRequest(`${sData[0]}getOwners${php}?id=${id}&type=${contentType}`)
 		.then(data=>{
 			let parsedData = JSON.parse(data),
 			tables = '';
@@ -417,7 +417,7 @@ coownersMenu = (id, contentType)=>{
 ownersAdd = (id, contentType)=>{
 	let userData = _.$.id('addown').value;
 	Loading();
-	_.http.req('GET', `${sData[1]}permAdd${php}?id=${id}&type=${contentType}&user=${userData}`)
+	helperRequest(`${sData[1]}permAdd${php}?id=${id}&type=${contentType}&user=${userData}`)
 		.then(data=>{
 			if (data == '-2')
 				return _.err.log('Access denied');
@@ -438,7 +438,7 @@ ownersAdd = (id, contentType)=>{
 },
 deleteOwner = (contentId, contentType, userId)=>{
 	Loading();
-	_.http.req('GET', `${sData[1]}perm${php}?id=${contentId}&type=${contentType}&user=${userId}`)
+	helperRequest(`${sData[1]}perm${php}?id=${contentId}&type=${contentType}&user=${userId}`)
 		.then(data=>{
 			if (data == '-2')
 				return _.err.log('Access denied');
@@ -525,12 +525,10 @@ tryAddShow = ()=>{
 	let links = _.$.D.getElementsByName('links[]').length,
 			tags = _.$.qa('[name="tags[]"]:checked').length,
 			os = _.$.qa('[name="os[]"]:checked').length;
-	console.log(links);
 	if (links === 0) {
 		megaAlert('linkRequired');
 		return false;
 	}
-	console.log(tags, os);
 	if (tags === 0 || os === 0) {
 		megaAlert('tagsRequired');
 		return false;
@@ -567,7 +565,7 @@ removeVacPre = (id, gdpsId)=>{
 },
 removeVac = (id, gdpsId, winId)=>{
 	Loading();
-	_.http.req('GET',`${sData[8]}removeVac${php}?id=${id}&gdpsId=${gdpsId}`)
+	helperRequest(`${sData[8]}removeVac${php}?id=${id}&gdpsId=${gdpsId}`)
 		.then(data=>{
 			if (data == 1) {
 				_.$.id('v'+id).remove();
@@ -592,7 +590,7 @@ removeApl = (id, gdpsId, winId)=>{
 			.then(data=>{
 				if (data == 1) {
 					_.$.id('a'+id).remove();
-					_.win.close(winId);
+					_.wins[winId].close();
 				}
 				Loading(1);
 			})
@@ -715,7 +713,6 @@ setMainWiki = (contentId, guideId, step = 0)=>{
 	}
 },
 removeDevice = (type, deviceId, isCurrent = '')=>{
-	console.log(type, _.$.q(`[device${deviceId}]`));
 	if (type === 0) {
 		if (!_.$.q(`[device${deviceId}]`))
 			return _.win.open('removeDevice',
@@ -730,7 +727,7 @@ removeDevice = (type, deviceId, isCurrent = '')=>{
 			_.win.close(type);
 		return gLogout();
 	}
-	_.http.req('GET', `${sData[5]}removeDevice`, `id=${deviceId}`)
+	_.http.req('POST', `${sData[5]}removeDevice${php}`, `id=${deviceId}`, urlEncoded)
 		.then(()=>{
 			Loading(1);
 			_.$.id('device'+deviceId).remove();
@@ -886,7 +883,7 @@ switchProfileProjects = (isPhone = 0)=>{ // makeSwticher(0,'userProjects2', swit
 				`<button class=loginbtn onclick="findsWindow(0)"${getTrans('yourCamps')}/button><br><br>`+
 				`<button class=loginbtn onclick="findsWindow(1)"${getTrans('yourShows')}/button><br><br>`+
 				`<button class=loginbtn onclick="findsWindow(2)"${getTrans('yourPeres')}/button><br><br>`+
-				`<button class=loginbtn onclick="findsWindow(3)"${getTrans('yourTeles')}/button><br><br>`+
+				(renderBeta === true ? `<button class=loginbtn onclick="findsWindow(3)"${getTrans('yourTeles')}/button><br><br>` : '')+
 				`<button class=loginbtn onclick="wikisWindow()"${getTrans('yourWikis')}/button><br><br>`+
 			`</div>`;
 	else 
@@ -895,7 +892,7 @@ switchProfileProjects = (isPhone = 0)=>{ // makeSwticher(0,'userProjects2', swit
 				`<button class=loginbtn onclick="findsWindow(0);profileSwitcherPhone()"${getTrans('yourCamps')}/button>`+
 				`<button class=loginbtn onclick="findsWindow(1);profileSwitcherPhone()"${getTrans('yourShows')}/button>`+
 				`<button class=loginbtn onclick="findsWindow(2);profileSwitcherPhone()"${getTrans('yourPeres')}/button>`+
-				`<button class=loginbtn onclick="findsWindow(3);profileSwitcherPhone()"${getTrans('yourTeles')}/button>`+
+				(renderBeta === true ? `<button class=loginbtn onclick="findsWindow(3);profileSwitcherPhone()"${getTrans('yourTeles')}/button>` : '')+
 				`<button class=loginbtn onclick="wikisWindow();profileSwitcherPhone()"${getTrans('yourWikis')}/button>`+
 			`</div>`;
 	return html;
@@ -954,7 +951,7 @@ profileDevices = ()=>{
 	`</div>`;
 	innerProfile(html);
 	Loading();
-	_.http.req('GET', `${sData[5]}devices`)
+	_.http.req('GET', `${sData[5]}devices${php}`)
 	.then(data=>{
 		// let parsedData = JSON.parse(data);
 		let parsedData = JSON.parse(data),
@@ -1203,7 +1200,6 @@ addFind = (channel)=>{
 		form.addEventListener('input', ()=>{
 			let save = e=>{
 				let f = _.form.read(_.$.q('form'));
-				console.log(f);
 				Slocal.set(channel+'gdpsAdd', JSON.stringify(f));
 			}
 			clearTimeout(TimeOut[2]);
@@ -1232,7 +1228,7 @@ editFind = (channel, gdpsId)=>{
 					bigString = 'Tele';
 					break;
 			}
-	helperRequest('GET', `${sData[1]}${smallString}Edit?id=${gdpsId}`)
+	helperRequest(`${sData[1]}${smallString}Edit${php}?id=${gdpsId}`)
 	.then (data=>{
 		_.link.set('edit'+bigString+'='+gdpsId);
 		let parsedData = JSON.parse(data),
@@ -1254,11 +1250,9 @@ editFind = (channel, gdpsId)=>{
 		if (TagsLocal != null && os != null)
 			tags = TagsLocal.concat(os);
 		for (let tag in Tags[channel]) {
-			console.log(tag);
 			let checked = '';
 			if (TagsLocal != null)
 				checked = tags.includes(tag) ? ' checked' : '';
-			console.log(tags);
 			tagss += renderTagAdding(Tags[channel], 'tags', tag, checked);
 		}
 		for (let osCurrent in Os[channel]) {
@@ -1283,7 +1277,7 @@ editFind = (channel, gdpsId)=>{
 		html = 
 		`<div id=helperContentProfile>`+
 			`<h1${getTrans('edit'+bigString)}/h1>`+ //${smallString}Edit${php}
-			`<form method=POST enctype="multipart/form-data" action='${sData[1]}${smallString}Edit' onsubmit="return enterFormData(this,'${sData[1]}${smallString}Edit?id=${gdpsId}')">`+
+			`<form method=POST enctype="multipart/form-data" action='${sData[1]}${smallString}Edit${php}' onsubmit="return enterFormData(this,'${sData[1]}${smallString}Edit${php}?id=${gdpsId}')">`+
 				`<label${getTrans('add'+bigString+'01')}/label><br><input value="${title}" class=framelabel type=text name=title style=width:100% required${getTrans(smallString+'Input01', 'input')}<br>`+
 				`<label${getTrans('add'+bigString+'02')}/label><br><textarea class=framelabel name=description style=width:100% required${getTrans(smallString+'Input02', 'input')}${description}</textarea><br>`+
 				`<label${getTrans('addCamp02a')}/label><br><input value="${short}" class=framelabel type=text name=short style=width:100%${getTrans('campInput02a', 'input')}<br>`+
@@ -1474,7 +1468,7 @@ editVacs = (channel, gdpsId, vacId)=>{
 },
 getVacancies = (channel, projId)=>{
 	Loading();
-	_.http.req('GET', `${sData[8]}get${php}?id=${projId}`)
+	helperRequest(`${sData[8]}get${php}?id=${projId}`)
 		.then(data=>{
 			Loading(1);
 			let parsedData = JSON.parse(data),
@@ -1495,7 +1489,7 @@ getVacancies = (channel, projId)=>{
 };
 vacResponses = (channel, projId, vacId)=>{
 	Loading();
-	_.http.req('GET',`${sData[8]}applies?vacid=${vacId}`)
+	helperRequest(`${sData[8]}applies${php}?id=${projId}&vacid=${vacId}`)
 		.then(data=>{
 			Loading(1);
 			let parsedData = JSON.parse(data),
@@ -1591,7 +1585,6 @@ findsWindow = (channel)=>{
 	_.link.set('added'+bigString+'s');
 	let gdpses = "";
 	for (let gdps in cacheArr) {
-		console.log(gdps);
 		gdpses+=FINDrenderInProfileFull(channel, [cacheArr[gdps]]);
 	};
 	let html =
