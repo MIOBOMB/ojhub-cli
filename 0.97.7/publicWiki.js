@@ -381,7 +381,7 @@ getGuide = (id, wikiId = 0)=>{
 	let html = pHeader()+
 		`<div id=helperContent class=guidePageLimiter>`+
 			`<h1 id=title class=gdps-forum></h1>`+
-			`<div id=texts class=gdps-forum></div>`+
+			`<div id=texts></div>`+
 			`<div id=innerEDIT class=gdps-forum><button class=loginbtn onclick="pageGuides(${wikiId})"${getTrans('back')}/button></div>`+
 			`<div align=center style="margin:8px">`+
 				contentSendCommForm(id+',2,6')+
@@ -431,6 +431,7 @@ getGuide = (id, wikiId = 0)=>{
 			if (guideinfo[4]) 
 				wikiApplyColor(guideinfo[4]);
 
+			let section = 0;
 			guidedata.forEach((div)=>{
 				let content = '';
 				switch (div[0]) {
@@ -446,10 +447,12 @@ getGuide = (id, wikiId = 0)=>{
 				}
 				html +=
 				`<div class=frameguide>`+
-					`<div style=margin:20px>`+
+					basicButton('>.)<', `throwWikiInWindow(${wikiId},${id},${section})`, `position:absolute;right:12px`)+
+					`<div style=margin:20px id="${wikiId}-${id}-${section}-engine">`+
 						content+
 					`</div>`+
 				`</div><br>`;
+				section++;
 			});
 			html += guideinfo[2];
 
@@ -462,4 +465,12 @@ getGuide = (id, wikiId = 0)=>{
 			Loading(1);
 		})
 		.catch(e=>{console.error(e);_.err.handleRejection(e)});;
+};
+throwWikiInWindow = (wikiId, guidId, sectId)=>{
+	let html = e=>`<div align=left>${e}</div>`,
+		win = _.win.open('wikiread',
+			''
+		, 'style=width:250px;height:400px'),
+		text = (_.$.id(`${wikiId}-${guidId}-${sectId}-engine`).innerHTML);
+	win.content.innerHTML = html(text);
 };
