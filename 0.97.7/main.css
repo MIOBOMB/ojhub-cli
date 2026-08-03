@@ -374,13 +374,13 @@ div .guidepic {
 	position: absolute;
 	transition: 0.3s;
 	margin-left: 8px;
-	margin-top: 2px;
+transform: translateY(2px);
 	z-index: 1;
 }
 
 .framegdps:hover .loh {
 	transition: 0.3s;
-	margin-top: 72px;
+	transform: translateY(72px);
 }
 
 .FGDPSimg {

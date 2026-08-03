@@ -1,5 +1,5 @@
 /*
- * Перед вами код newHelper.js версии 2.1.8,
+ * Перед вами код newHelper.js версии 2.1.9,
  * Фронтенд библиотека сверхлегких и мощных утилит.
  * Библиотека построена на базе фабрики
  * Которая начинается с Intl.newHelper=function(namespace){...};
@@ -726,7 +726,7 @@ Intl.newHelper=function(_='_') {
 		/* 
 		 * МОДУЛЬ ОШИБОК
 		 * Author: MIOBOMB (2024-2026)
-		 * Last patch: 2.1.4
+		 * Last patch: 2.1.9
 		 *
 		 * Мой самописный модуль ошибок
 		 * вообще он ялвяется наследием
@@ -747,9 +747,9 @@ Intl.newHelper=function(_='_') {
 		errors: {},
 		_c: 0,
 		log(err) {
-			window[_].err.print(window[_].err._c,err);
-			window[_].err._c++;
-			window[_].err.errors[window[_].err._c]=err;
+			let c = window[_].err._c++;
+			window[_].err.print(c,err);
+			window[_].err.errors[c]=err;
 		},
 		handleGlobal(message,source,line,column,error){
 			console.error(message,source+':'+line+':'+column,error)
@@ -760,7 +760,7 @@ Intl.newHelper=function(_='_') {
 			console.error(err);
 			window[_].err.log(
 				`PROMISE ERROR\n`+
-				`${e.stack || e}`
+				`${err.stack || err}`
 			);
 		},
 	};

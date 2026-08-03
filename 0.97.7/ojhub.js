@@ -2011,7 +2011,7 @@ newsWindow = (contentId = 0, contentType = 'c')=>{
 	let html = 
 	`<div id=helperContentProfile>`+
 		`<h1 id=blacktext${getTrans('newPost')}/h1>`+
-		`<form method=post onsubmit="return enterFormData(this,'newsPost')">`+
+		`<form method=post onsubmit="return enterFormData(this,'${sData[1]}newsPost${php}')">`+
 			`<input style=width:90% class=framelabel type=title name=title${getTrans('addCamp01', 'input')}<br>`+
 			`<textarea style=width:90%;height:64px class=framelabel name=text ${getTrans('newsText', 'textarea')}/textarea><br>`+
 			`<progress max=1 value=0 id=newsFileProg style=display:none></progress><br>`+
@@ -3192,6 +3192,15 @@ enterFormData = (form, sendPlace)=>{
 	let FORMDATA = new FormData(form);
 	params = '';
 
+	switch (sendPlace) {
+		case sData[1]+'newsPost'+php:
+			let gdpsId = FORMDATA.get('gdps'),
+				[ch, gdps] = [gdpsId[0], gdpsId.slice(1)];
+			FORMDATA.set('ch', ch);
+			FORMDATA.set('gdps', parseInt(gdps));
+			break;
+	}
+
 	let postHasFiles = false;
 	for (let [key, value] of FORMDATA.entries()) {
 		if (value instanceof File) {
@@ -3218,15 +3227,16 @@ enterFormData = (form, sendPlace)=>{
 				getForumPost(parsedData[0],parsedData[1]);
 				_.wins[_.$.q('[forumpost]').id].close();
 				break;
-			case 'newsPost'+php:
+			case sData[1]+'newsPost'+php:
 				const funcs = {
 					'p': getPere,
 					't': getTele,
 					's': getShow,
 					'c': getCamp,
 				},
+				ch = FORMDATA.get('ch');
 				gId = FORMDATA.get('gdps');
-				funcs[gId[0]](gId.slice(1));
+				funcs[ch](gId);
 				break;
 			case `writeAlarm${php}`:
 				_.wins[FORMDATA.get('windowId')].close();

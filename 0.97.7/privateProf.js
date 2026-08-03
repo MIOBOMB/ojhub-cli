@@ -813,40 +813,6 @@ setColorScheme = ()=>{
 	Slocal.set('ColorScheme',_.$.id('scheme').value);
 	colorGenerator();
 },
-keyBindsList = ()=>{
-	return _.win.open('listcommands',
-		Markdown(
-			`# Projects opening {winId}\n`+
-			`c!id - open camp (example: c!37 open camp with id 37)\n`+
-			`s!id - open show (example: c!17 open show with id 17)\n`+
-			`d!id - open dub (example: d!117 open dub with id 117)\n`+
-			`ce!id - edit camp (example: c!37 open camp editor with id 37)\n`+
-			`se!id - edit show (example: c!17 open show editor with id 17)\n`+
-			`de!id - edit dub (example: d!117 open dub editor with id 117)\n`+
-			`nc!id - open news for camp (example: nc!37 open news for camp with id 37)\n`+
-			`ns!id - open news for show (example: nc!17 open news for show with id 17)\n`+
-			`nd!id - open news for dub (example: nd!117 open news for dub with id 117)\n`+
-			`vc!id - open vacancies for camp (example: c!37 open vacancies for camp with id 37)\n`+
-			`vs!id - open vacancies for show (example: c!17 open vacancies for show with id 17)\n`+
-			`vd!id - open vacancies for dub (example: d!117 open vacancies for dub with id 117)\n`+
-			`vac!projId.vacId - open vacancy apllies for camp (example: c!37.1 open vacancy apllies for vacancy with id 1 in camp with id 37)\n`+
-			`vas!projId.vacId - open vacancy apllies for show (example: c!17.1 open vacancy apllies for vacancy with id 1 in show with id 17)\n`+
-			`vad!projId.vacId - open vacancy apllies for dub (example: d!117.1 open vacancy apllies for vacancy with id 1 in dub with id 117)\n`+
-			`# Wiki management\n`+
-			`w!id - open wiki (example: w!27 open wiki with id 27)\n`+
-			`wp!pageId.wikiId - open page from wiki (example: wp!49.27 open page from wiki 27)\n`+
-			`we!pageId.wikiId - open page editor from wiki (example: we!49.27 open page editor for page 49 from wiki 27)\n`+
-			`wc!id - open control panel for wiki (example: wc!27 open control panel for wiki with id 27)\n`+
-			`\n`+
-			``
-		)
-	, 'keybindslist')
-},
-saveKeys = ()=>{
-	Slocal.set('KeysCfg', JSON.stringify(keyActions));
-	Slocal.set('KeysCustomCfg', JSON.stringify(keyCustomActions));
-	megaAlert2('DONE',1000);
-},
 saveKeys2 = ()=>{
 	let code = _.$.id('hetkeysCfg');
 	Slocal.set('Hotkeys', code.value);
@@ -1055,45 +1021,6 @@ clrEditPage = ()=>{
 	//		 renderSwitch(val, 1);
 	//	 });
 	// });
-};
-keyBindsCfg = ()=>{
-	_.link.set('binds');
-	let html2 = '';
-	for (let actName in keyActions) {
-		let key = keyActions[actName],
-		actTrans = `>${actName}<`;
-		if (!actName.startsWith('act'))
-			actTrans = getTrans(actName);
-		html2 += `<span id=name-${actName}${actTrans}/span>: ${basicInput('','key-'+actName,'width:100px','',key)}`;
-		if (actName.startsWith('act'))
-			html2 += basicInput('settings011','actkey-'+actName,'width:100px','',keyCustomActions[actName[3]]);
-		html2 += '<br>';
-	}
-	let html = 
-	`<div id=helperContentProfile>`+
-		`<h1${getTrans('settings013')}/h1>`+
-		html2+
-		`<br>${basicButton(getTrans('settings002'), `saveKeys()`)}`+
-		basicButton(getTrans('settings012'), `keyBindsList()`)+
-		basicButton(`>nh hotkeys<`, `keyBindsCfg2()`)+
-	`</div>`;
-	if (_.$.id('profileWindow'))
-		innerProfile(html);
-	for (let actName in keyActions) {
-		if (_.$.id('key-'+actName))
-			_.$.id('key-'+actName).addEventListener('keydown', e=>{
-  			e.preventDefault();
-				_.$.id('key-'+actName).value = e.code;//setAttribute('value', e.code);
-				keyActions[_.$.id('name-'+actName).textContent] = e.code;
-			})
-	}
-	for (let i = 0; i < 10; i++) {
-		if (_.$.id('actkey-act'+i))
-			_.$.id('actkey-act'+i).addEventListener('input', e=>{
-				let id = e.target.id.slice(e.target.id.length-1);
-				keyCustomActions[id] = _.$.id('actkey-act'+id).value;
-			})
-	}
 };
 keyBindsCfg2 = ()=>{
 	_.link.set('hotkeys');
