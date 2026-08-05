@@ -130,6 +130,7 @@ _.restart = ()=>{
 		deh: async ()=> {let i = await debugWindow();if(i)i.hide()},
 		dropcolor: ()=> {profilePage();clrEditPage();dropColorScheme();removeLink('dropcolor')},
 		ignoreCap: ()=> {ignoreCap = true},
+		renderBeta: ()=>{renderBeta = true},
 		error: ()=>     {_.err.print(0, "HMMM");_.link.remove('error')},
 		shell: ()=>     patchUrl(),
 		lsEdit:()=>     lsEdit(),

@@ -380,7 +380,7 @@ contentRender = function(
 		gdpsAvatar(preHtml.img) : '')+
 		`<h2 id=${preHtml.cType}title${preHtml.ID}>${preHtml.title}</h2>`+
 		(likeType === 0 ?
-			(renderBeta === true ? basicButton('>ПОДПИСАТЬСЯ<', `subRespond(${preHtml.ID})`) : '') ///////////////////////////////////////////////////////////////////////////////////// КНОПКА ПОДПИСКИ
+			(renderBeta === true ? basicButton('>ПОДПИСАТЬСЯ<', `subRespond(${preHtml.ID})`, '', `sub${preHtml.ID}`) : '') ///////////////////////////////////////////////////////////////////////////////////// КНОПКА ПОДПИСКИ
 		: '')+
 		`<p style="margin:0">`+
 		(authorBtn ?
@@ -2515,35 +2515,47 @@ repaintLikeButton = (id, isComm, liketype = 0)=>{
  */
 subRespond = (gdpsId)=>{
 	Loading();
-	_.http.req('GET', `${nData[10]}sub?id=${gdpsId}`)
-		.then(aplId=>{
-			let vacId = gdpsId;
-			Loading(1);
-			megaAlert('reported');
-			let applyBtn = _.$.id('a'+vacId);
-			if (applyBtn) {
-				applyBtn.setAttribute('data-trans', 'vacResponded');
-				applyBtn.setAttribute('onclick', `vacUnrespond(${vacId},${aplId})`);
-				applyBtn.textContent = getTrans('vacResponded',0);
-			}
-		})
-		.catch(e=>{console.error(e);_.err.handleRejection(e)});;
-},
-subUnrespond = (vacId, aplId)=>{
-	Loading();
-	_.http.req('GET', `${nData[10]}unsub?id=${aplId}&vacId=${vacId}`)
+	_.http.req('GET', `${sData[10]}sub${php}?id=${gdpsId}`)
 		.then(data=>{
 			Loading(1);
-			megaAlert('otmena');
-			let applyBtn = _.$.id('a'+vacId);
-			if (applyBtn) {
-				applyBtn.setAttribute('data-trans', 'vacRespond');
-				applyBtn.setAttribute('onclick', `vacRespond(${vacId})`);
-				applyBtn.textContent = getTrans('vacRespond',0);
+			if (data == '1') {
+				megaAlert('prinyato');
+				let subBtn = _.$.id('sub'+gdpsId);
+				if (subBtn) {
+					subBtn.setAttribute('data-trans', 'gdpsUnsub');
+					subBtn.setAttribute('onclick', `subUnrespond(${gdpsId})`);
+					subBtn.textContent = getTrans('gdpsUnsub',0);
+				}
+			} else if (data == '-1') {
+				megaAlert('alreadySubscribed');
+			} else {
+				megaAlert('error');
 			}
 		})
 		.catch(e=>{console.error(e);_.err.handleRejection(e)});;
 },
+subUnrespond = (gdpsId)=>{
+	Loading();
+	_.http.req('GET', `${sData[10]}unsub${php}?id=${gdpsId}`)
+		.then(data=>{
+			Loading(1);
+			if (data == '1') {
+				megaAlert('otmena');
+				let subBtn = _.$.id('sub'+gdpsId);
+				if (subBtn) {
+					subBtn.setAttribute('data-trans', 'gdpsSub');
+					subBtn.setAttribute('onclick', `subRespond(${gdpsId})`);
+					subBtn.textContent = getTrans('gdpsSub',0);
+				}
+			} else if (data == '-1') {
+				megaAlert('notSubscribed');
+			} else {
+				megaAlert('error');
+			}
+		})
+		.catch(e=>{console.error(e);_.err.handleRejection(e)});;
+},
+
 pushSubscribe = async ()=>{
 	if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
 		console.warn('push не поддерживается этим браузером');
@@ -2576,7 +2588,7 @@ pushSendToServer = async (sub)=>{
 				`p256dh=${encodeURIComponent(j.keys.p256dh)}&`+
 				`auth=${encodeURIComponent(j.keys.auth)}`,
 		// FIXME: привести к nData/sData нормализации
-		res = await _.http.req('POST', `${sData[2]}sub.php`, data, urlEncoded);
+		res = await _.http.req('POST', `${sData[2]}sub${php}`, data, urlEncoded);
 
 	if (res !== '1') {
 		console.error('push: не удалось сохранить подписку', res);
@@ -3520,7 +3532,7 @@ otherFindsWindow = (channel, userId)=>{
 			gdpses = "";
 		parsedData.forEach(gdps=>{
 			if (typeof(gdps) == 'object') {
-				gdpses+=FINDrenderInProfile(channel, gdps);
+				gdpses+=FINDrenderInProfile(gdps);
 			};
 		});
 		let html =
@@ -3568,7 +3580,7 @@ otherWikisWindow = (userId)=>{
 	})
 	.catch(e=>{console.error(e);_.err.handleRejection(e)});;
 },
-FINDrenderInProfile = (channel, parsedData)=>{
+FINDrenderInProfile = (parsedData, limit = 9, flags = [])=>{
 	let html = '',
 		Count = 0,
 
@@ -3579,12 +3591,13 @@ FINDrenderInProfile = (channel, parsedData)=>{
 		userId = null,
 		username = null,
 		pictureLink = null,
-		isWeeklyData = ['',''],
-		[smallString, bigString] = GDPSswitchChannel(channel);
+		smallString = null,
+		bigString = null,
+		isWeeklyData = ['',''];
 
 	for (let Id in parsedData) {
 		Count++;
-		if (Count == 9)
+		if (Count == limit)
 			return html;
 
 		gdpsData = parsedData[Id];
@@ -3594,6 +3607,7 @@ FINDrenderInProfile = (channel, parsedData)=>{
 		userId = gdpsData.author;
 		username = gdpsData.username;
 		pictureLink = gdpsData.img;
+		[smallString, bigString] = GDPSswitchChannel(gdpsData.channel);
 
 		isWeeklyData = ['',''];
 
@@ -3603,12 +3617,13 @@ FINDrenderInProfile = (channel, parsedData)=>{
 			`<h2 style="display:inline;margin-right:4px">${title}</h2>`+
 			`<p style="display:inline;margin:0">`+
 				`<span${getTrans('addedBy')}/span>:`+
-				`<button onclick="otherProfile(${userId},'pageFind(${channel})')" style="background:0;border:0;color:var(--color-white)">${username}</button>`+
+				`<button onclick="otherProfile(${userId},'pageFind(${gdpsData.channel})')" style="background:0;border:0;color:var(--color-white)">${username}</button>`+
 			`</p>`+
 			`<div style="min-height:64px">`+
 				`<img onerror="console.warn('broken link');this.src='${helperUrl}imgs/hubbig.png'" align="left" src="${decodeURIComponent(pictureLink)}" width=64px height=64px style="border-radius:calc(var(--def-border-small)*1.5)">`+
 				`<p>${description}${description[120] === undefined ? '' : '...'}</p>`+
 				basicButton(getTrans('openGdps'), `get${bigString}(${thisId})`)+
+				(flags.includes('unsub') ? basicButton(getTrans('unsub'), `subUnrespond2(${thisId})`) : '')+
 			`</div>`+
 		`</div>`;
 	};

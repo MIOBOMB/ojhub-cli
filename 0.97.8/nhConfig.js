@@ -140,7 +140,6 @@ _.restart = ()=>{
 	_.link.actions = {
 
 		'': ()=>                 {innerMain(pageMain())},
-		loader: ()=>             {innerMain(loader())},
 		find: ()=>               {pageFind()},
 		list: ()=>               {pageFind(0)},
 		shows: ()=>              {pageFind(1)},
@@ -176,6 +175,10 @@ _.restart = ()=>{
 		drop: ()=>               {innerMain(dropWindow())},
 		verify: ()=>             {innerMain(verifyWindow())},
 		profile: ()=>            {profilePage()},
+		'profile/':{
+			'': ()=>             {profilePage()},
+			subs: ()=>           {profilePage('');subsWindow();GetSubs()},
+		},
 		addedCamps: ()=>         {profilePage('');findsWindow(0)},
 		addedShows: ()=>         {profilePage('');findsWindow(1)},
 		addedPeres: ()=>         {profilePage('');findsWindow(2)},
@@ -307,6 +310,7 @@ _.restart = ()=>{
 		'findsWindow',
 		'wikisWindow',
 		'alarmsWindow',		'GetAlarms',
+		'subsWindow',		'GetSubs',
 		'profileDevices',
 		'clrEditPage',
 		'keyBindsCfg',		'keyBindsCfg2',
