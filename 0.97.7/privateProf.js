@@ -569,7 +569,7 @@ removeVac = (id, gdpsId, winId)=>{
 		.then(data=>{
 			if (data == 1) {
 				_.$.id('v'+id).remove();
-				_.win.close(winId);
+				_.wins[winId].close();
 			}
 			Loading(1);
 		})
