@@ -291,21 +291,21 @@ let
 	},
 // #endregion
 
-headerButton = (text, Class, oncl)=>{
-	return `<button class="${Class}" onclick="${oncl}"${text}/button>`;
+headerButton = (text, Class, oncl, customAttrs='')=>{
+	return `<button class="${Class}" ${customAttrs} onclick="${oncl}"${text}/button>`;
 },
 headerButtons = (switcherM = 0)=>{
 	if (switcherM === 1) // if phone screen
 		return headerButton(getTrans('main'),	'headbtn','switchMobileMain();innerMain(pageMain())')+
 		headerButton(getTrans('projects'),		'headbtn','switchMobileMain();pageFind(helperFindData[3])')+
-		headerButton(getTrans('news'),			'headbtn','switchMobileMain();globalNews()')+
+		headerButton(getTrans('news'),			'headbtn','switchMobileMain();globalNews()', 'aw-actname=aw-header-news')+
 		headerButton(getTrans('vacancies'),		'headbtn','switchMobileMain();globalVacs()')+
 		headerButton(getTrans('guides09'),		'headbtn','switchMobileMain();pageWikiList()')+
 		headerButton(getTrans('aboutHelper'),	'headbtn','switchMobileMain();innerMain(helperAbout())');
 
 	return headerButton(getTrans('main'),	'headbtn','innerMain(pageMain())')+
 	headerButton(getTrans('projects'),		'headbtn','pageFind(helperFindData[3])')+
-	headerButton(getTrans('news'),			'headbtn','globalNews()')+
+	headerButton(getTrans('news'),			'headbtn','globalNews()', 'aw-actname=aw-header-news')+
 	headerButton(getTrans('vacancies'),		'headbtn','globalVacs()')+
 	headerButton(getTrans('guides09'),		'headbtn','pageWikiList()')+
 	headerButton(getTrans('aboutHelper'),	'headbtn','innerMain(helperAbout())');
@@ -2012,12 +2012,12 @@ newsWindow = (contentId = 0, contentType = 'c')=>{
 	`<div id=helperContentProfile>`+
 		`<h1 id=blacktext${getTrans('newPost')}/h1>`+
 		`<form method=post onsubmit="return enterFormData(this,'${sData[1]}newsPost${php}')">`+
-			`<input style=width:90% class=framelabel type=title name=title${getTrans('addCamp01', 'input')}<br>`+
-			`<textarea style=width:90%;height:64px class=framelabel name=text ${getTrans('newsText', 'textarea')}/textarea><br>`+
+			`<input aw-actname=aw-news-title style=width:90% class=framelabel type=title name=title${getTrans('addCamp01', 'input')}<br>`+
+			`<textarea aw-actname=aw-news-text style=width:90%;height:64px class=framelabel name=text ${getTrans('newsText', 'textarea')}/textarea><br>`+
 			`<progress max=1 value=0 id=newsFileProg style=display:none></progress><br>`+
 			`<input name=files id=newsFiles type=file multiple><br>`+
 			gdpses+
-			`<input type=submit class="loginbtn"${getTrans('publishNews', 'inputValue')}`+
+			`<input aw-actname=aw-news-submit type=submit class="loginbtn"${getTrans('publishNews', 'inputValue')}`+
 		`</form>`+
 	`</div>`;
 	return html;
@@ -2430,6 +2430,7 @@ LIKES = {
 		if (!token)
 			return false;
 		_.http.req('GET', `${sData[2]}likesT${php}`).then(data=>{
+			if (data === 'Access denied') return;
 			let parsedData = JSON.parse(data);
 			for (let i in parsedData)
 				LIKES.push(i, parsedData[i]);
@@ -3303,6 +3304,12 @@ enterFormData = (form, sendPlace)=>{
 				});
 				profilePage();
 		};
+		document.dispatchEvent(new CustomEvent('aw:form-success', {
+			detail: {
+				adde: sendPlace,
+				data: data
+			}
+		}));
 		return false;
 	})
 	.catch(e=>{console.error(e);_.err.handleRejection(e)});;

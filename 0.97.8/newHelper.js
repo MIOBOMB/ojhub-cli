@@ -1129,6 +1129,7 @@ Intl.newHelper=function(_='_') {
 	
 			if (this.duration > 0)
 				setTimeout(() => this.close(wId), this.duration)
+			return wId;
 		}
 		close(winId) {
 			let win = window[_].x10.get(winId), w;

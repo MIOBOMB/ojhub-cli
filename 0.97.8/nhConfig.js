@@ -182,6 +182,7 @@ _.restart = ()=>{
 		addedCamps: ()=>         {profilePage('');findsWindow(0)},
 		addedShows: ()=>         {profilePage('');findsWindow(1)},
 		addedPeres: ()=>         {profilePage('');findsWindow(2)},
+		addedTeles: ()=>         {profilePage('');findsWindow(3)},
 		addedWikis: ()=>         {profilePage('');wikisWindow()},
 		addCamp: ()=>            {profilePage('');addFind(0)},
 		editCamp: (campId)=>     {profilePage('');editFind(0, campId)},
@@ -330,8 +331,8 @@ _.restart = ()=>{
 	_.lazy.register(scritpsUrl + '/wordle.js?ver='+scrLoadVer,[
 		'wordleGame'
 	]);
-	_.lazy.register(scritpsUrl + '/wordle2.js?ver='+scrLoadVer,[
-		'wordle.trolleybus.games.init'
+	_.lazy.register(scritpsUrl + '/aw.js?ver='+scrLoadVer,[
+		'awOpenMainWindow'
 	]);
 
 	/*
